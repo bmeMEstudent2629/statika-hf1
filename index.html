@@ -127,29 +127,58 @@ figure{margin:0}
 figcaption{font-size:13px;color:var(--muted);margin-top:8px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:6px}
 .legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
-#fig .axis line{stroke:var(--muted);stroke-width:1.2}
-#fig .axis polygon{fill:var(--muted)}
-#fig .guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;fill:none}
-#fig .neg-axis{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4;fill:none}
-#fig .gpath{stroke:var(--res);stroke-width:1.8;stroke-dasharray:5 3;fill:none;stroke-linejoin:round}
-#fig .gtick{fill:var(--res)}
-#fig .rod-edge{stroke:var(--rod-edge);stroke-width:8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-#fig .rod{stroke:var(--rod);stroke-width:5.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
-#fig .load line{stroke:var(--accent);stroke-width:2.6}
-#fig .load polygon{fill:var(--accent)}
-#fig .res line{stroke:var(--res);stroke-width:2.8}
-#fig .res polygon{fill:var(--res)}
-#fig .caxis{stroke:var(--res);stroke-width:1.4;stroke-dasharray:8 5;fill:none}
-#fig .dot{fill:var(--res)}
-#fig .odot{fill:var(--ink)}
-#fig text{font-family:"Times New Roman",Times,serif;font-style:italic;font-size:19px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
-#fig text.t-load{fill:var(--accent)}
-#fig text.t-res{fill:var(--res)}
-#fig text.t-axis{fill:var(--muted);font-size:16px}
-#fig tspan.s{font-size:13px}
+.scene .axis line{stroke:var(--muted);stroke-width:1.2}
+.scene .axis polygon{fill:var(--muted)}
+.scene .guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.scene .neg-axis{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4;fill:none}
+.scene .gpath{stroke:var(--res);stroke-width:1.8;stroke-dasharray:5 3;fill:none;stroke-linejoin:round}
+.scene .gtick{fill:var(--res)}
+.scene .rod-edge{stroke:var(--rod-edge);stroke-width:8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.scene .rod{stroke:var(--rod);stroke-width:5.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.scene .load line{stroke:var(--accent);stroke-width:2.6}
+.scene .load polygon{fill:var(--accent)}
+.scene .res line{stroke:var(--res);stroke-width:2.8}
+.scene .res polygon{fill:var(--res)}
+.scene .caxis{stroke:var(--res);stroke-width:1.4;stroke-dasharray:8 5;fill:none}
+.scene .dot{fill:var(--res)}
+.scene .odot{fill:var(--ink)}
+.scene text{font-family:"Times New Roman",Times,serif;font-style:italic;font-size:19px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+.scene text.t-load{fill:var(--accent)}
+.scene text.t-res{fill:var(--res)}
+.scene text.t-axis{fill:var(--muted);font-size:16px}
+.scene tspan.s{font-size:13px}
 .empty{color:var(--muted);font-size:14px;padding:24px;text-align:center}
 footer{margin-top:24px;font-size:13px;color:var(--muted)}
 footer p{margin:4px 0;max-width:90ch}
+.scene .box-edge{stroke:var(--rod-edge);stroke-width:1.4;fill:none}
+.scene .box-hidden{stroke:var(--rod-edge);stroke-width:1.2;stroke-dasharray:5 4;fill:none}
+/* layout presets */
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+@media (max-width:560px){.presets{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.preset{padding:8px}.preset .thumb{height:130px}.preset-desc{font-size:12px}}
+.preset{position:relative;display:flex;flex-direction:column;gap:6px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px 12px;cursor:pointer;background:var(--surface);transition:border-color .12s, box-shadow .12s}
+.preset:hover{border-color:var(--line-strong)}
+.preset.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.preset input{position:absolute;opacity:0;pointer-events:none}
+.preset:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.preset .thumb{width:100%;height:180px;display:block;background:var(--surface-2);border-radius:8px}
+.thumb text{font-size:25px}
+.thumb tspan.s{font-size:17px}
+.thumb .rod-edge{stroke-width:11}
+.thumb .rod{stroke-width:7.5}
+.thumb .load line{stroke-width:3.4}
+.thumb .axis line{stroke-width:1.6}
+.thumb text.t-axis{font-size:21px}
+.thumb .box-edge{stroke-width:2}
+.thumb .box-hidden{stroke-width:1.6}
+.preset-head{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px}
+.badge{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent-ink);border-radius:6px;padding:1px 7px}
+.preset.selected .badge{background:var(--accent);color:var(--surface)}
+.preset-desc{font-size:13px;color:var(--muted);line-height:1.45;margin:0}
+.preset-years{font-size:12px;color:var(--muted);margin:0}
+.toggle{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin-top:16px;cursor:pointer}
+.toggle input{margin-top:4px;accent-color:var(--accent)}
+.info{font-size:13px;color:var(--ok);margin:10px 0 0}
+.info[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -157,19 +186,27 @@ footer p{margin:4px 0;max-width:90ch}
   <header>
     <p class="eyebrow">BME GPK · Statika · 1. házi feladat</p>
     <h1>Erőrendszer redukálása – kalkulátor</h1>
-    <p>Írd be a saját lapod „Adatok” táblázatát. Az eredmények gépelés közben frissülnek, alattuk pedig a teljes levezetés látható a te számaiddal.</p>
+    <p>Válaszd ki, melyik ábra van a lapodon, majd írd be az „Adatok” táblázatot. Az eredmények gépelés közben frissülnek, alattuk pedig a teljes levezetés látható a te számaiddal.</p>
   </header>
+
+  <section class="card" aria-labelledby="h-layout" style="margin-bottom:20px">
+    <h2 id="h-layout">Az ábrád elrendezése</h2>
+    <p class="sub">A rudak alakja, valamint az F₂, F₃ és M₂ támadáspontja és iránya lapról lapra változhat. Válaszd azt, amelyik pontosan olyan, mint a lapodon lévő ábra.</p>
+    <div class="presets" id="presets" role="radiogroup" aria-label="Elrendezés"></div>
+  </section>
 
   <div class="grid-top">
     <section class="card" aria-labelledby="h-inputs">
       <h2 id="h-inputs">Adatok</h2>
-      <p class="sub">A kiemelt mezők a két ismert lapon eltértek, ezeket biztosan a sajátodról töltsd ki. A többit is ellenőrizd.</p>
+      <p class="sub" id="inputs-sub"></p>
       <div id="inputs"></div>
-      <p class="hint">Tizedesvessző és tizedespont is jó (0,7 vagy 0.7). Ha a lapodon F₂ vagy F₃ három koordinátával szerepel, írd be mindhármat. Ha csak egy szám van megadva, azt az ábra szerinti irány komponensébe írd, előjellel (pl. F₂ +y irányú → F₂y), a másik kettő 0. Ugyanígy M₂-nél: az alap lapon M₂ az ábrán lefelé (−z) mutat, ezért a táblázatbeli 2,1 → M₂z = −2,1 (M₂x = M₂y = 0).</p>
+      <label class="toggle"><input type="checkbox" id="manual"> <span>F₂, F₃ és M₂ megadása komponensenként (x, y, z)</span></label>
+      <p class="hint">Tizedesvessző és tizedespont is jó (0,7 vagy 0.7). Az F₂, F₃ és M₂ értékét úgy írd be, ahogy a táblázatban áll: az irányukat és a támadáspontjukat a kiválasztott elrendezés adja (negatív szám ellentétes irányt jelent). Ha a lapodon ezek három koordinátával szerepelnek, vagy az ábrád egyik elrendezéssel sem egyezik pontosan, kapcsold be a komponensenkénti megadást.</p>
       <div class="actions">
-        <button type="button" id="btn-example">Példaadatok betöltése</button>
+        <button type="button" id="btn-example">Példa betöltése</button>
         <button type="button" id="btn-reset">Alapértékek visszaállítása</button>
       </div>
+      <p class="info" id="example-note" hidden></p>
     </section>
 
     <section class="card" aria-labelledby="h-results">
@@ -193,8 +230,8 @@ footer p{margin:4px 0;max-width:90ch}
   </section>
 
   <footer>
-    <p>Az ábra értelmezése: B = (a; 0; 0), C = (a; b; 0), D = (0; b; 0), A = (a; 0; c), E = (0; b; c). F₁ a B, F₂ az E, F₃ a C pontban hat (mindhárom tetszőleges irányú vektor lehet). M₁ és M₂ szabad vektorok, mindkettő három koordinátával adható meg (az alap lapon M₂ = (0; 0; −M₂), azaz lefelé mutat).</p>
-    <p>Tanulási segédlet: a levezetést érdemes végigkövetni, és a méretarányos ábrát (1. és 5. feladatrész) magadnak elkészíteni.</p>
+    <p id="footer-geo"></p>
+    <p>Az elrendezéseket korábbi feladatlapok kidolgozott eredményeivel ellenőriztük. Tanulási segédlet: a levezetést érdemes végigkövetni, és a méretarányos ábrát (1. és 5. feladatrész) magadnak elkészíteni.</p>
   </footer>
 </div>
 
@@ -203,37 +240,84 @@ footer p{margin:4px 0;max-width:90ch}
 "use strict";
 const T = String.raw;
 const $ = (s, r = document) => r.querySelector(s);
-const STORE_KEY = "statika-hf1-v3";
+const STORE_KEY = "statika-hf1-v4";
 
-const GROUPS = [
-  { key: "geo", title: "Geometria", unit: "m" },
-  { key: "f1", title: "F₁ erő – B pontban", unit: "kN" },
-  { key: "f2", title: "F₂ erő – E pontban", unit: "kN" },
-  { key: "f3", title: "F₃ erő – C pontban", unit: "kN" },
-  { key: "m1", title: "M₁ erőpár", unit: "kNm" },
-  { key: "m2", title: "M₂ erőpár", unit: "kNm" },
+/* ---------- layouts (checked against worked sheets) ---------- */
+const PRESETS = [
+  {
+    id: "A", title: "A változat",
+    desc: "Két függőleges oszlop (A–B és E–D), köztük B–C–D a vízszintes síkban. M₂ az A-ban lefelé, F₂ az E-ben +y, F₃ a C-ben felfelé.",
+    years: "Pl. 2017/18, 2020/21, 2026/27",
+    pts: { A: ["a", "0", "c"], B: ["a", "0", "0"], C: ["a", "b", "0"], D: ["0", "b", "0"], E: ["0", "b", "c"] },
+    path: ["A", "B", "C", "D", "E"],
+    F1: "B", F2: { at: "E", dir: [0, 1, 0], head: true }, F3: { at: "C", dir: [0, 0, 1] },
+    M1: "D", M2: { at: "A", dir: [0, 0, -1], head: true },
+    example: { a: "0.3", b: "0.6", c: "0.5", F1x: "-2", F1y: "-1", F1z: "0.7", F2: "2", F3: "2.1", M1x: "0.8", M1y: "1.3", M1z: "0.5", M2: "2.1" },
+    exampleNote: "2026/27-es lap adatai; a helyes eredmény M_O = (1.06; 0.46; −1.9), r_G = (−0.2483; −0.0648; −0.1542).",
+  },
+  {
+    id: "B", title: "B változat",
+    desc: "A–B a vízszintes síkban, B–C–D–E „kapu” (C és D fent). F₂ a D-ben felfelé, F₃ a C-ben −y, M₂ a B-ben −x.",
+    years: "Pl. 2020/21",
+    pts: { A: ["a", "0", "0"], B: ["a", "b", "0"], C: ["a", "b", "c"], D: ["0", "b", "c"], E: ["0", "b", "0"] },
+    path: ["A", "B", "C", "D", "E"],
+    F1: "A", F2: { at: "D", dir: [0, 0, 1] }, F3: { at: "C", dir: [0, -1, 0] },
+    M1: "E", M2: { at: "B", dir: [-1, 0, 0], head: true },
+    example: { a: "0.4", b: "0.5", c: "0.6", F1x: "3", F1y: "0.8", F1z: "-2", F2: "2.2", F3: "1.2", M1x: "0.5", M1y: "-1", M1z: "0.4", M2: "1.4" },
+    exampleNote: "Korábbi (2020/21-es) lap adatai; a lapon szereplő eredmény M_O = (0.92; −0.2; 0.24), r_G = (−0.0061; −0.0583; −0.0252).",
+  },
+  {
+    id: "C", title: "C változat",
+    desc: "A–B–C–D „kapu” (B és C fent), D–E a vízszintes síkban. F₂ a C-ben −x, F₃ a D-ben lefelé, M₂ a B-ben +y.",
+    years: "Pl. 2018/19, 2021/22, 2022/23, 2023/24",
+    pts: { A: ["a", "0", "0"], B: ["a", "0", "c"], C: ["a", "b", "c"], D: ["a", "b", "0"], E: ["0", "b", "0"] },
+    path: ["A", "B", "C", "D", "E"],
+    F1: "A", F2: { at: "C", dir: [-1, 0, 0] }, F3: { at: "D", dir: [0, 0, -1] },
+    M1: "E", M2: { at: "B", dir: [0, 1, 0], head: true },
+    example: { a: "0.3", b: "0.6", c: "0.6", F1x: "-2", F1y: "-1", F1z: "-2", F2: "2", F3: "1.2", M1x: "0.8", M1y: "1.3", M1z: "0.4", M2: "2.1" },
+    exampleNote: "Korábbi (2021/22-es), elfogadott lap adatai; a helyes eredmény M_O = (0.08; 3.16; 1.3), r_G = (0.3235; 0.1815; −0.4611).",
+  },
+  {
+    id: "D", title: "D változat – hasáb",
+    desc: "Régebbi feladatlap: a × b × c hasáb, erők az A, B és E csúcsban. F₂ a B-ben −x, F₃ az E-ben lefelé, M₂ a D-ben +y.",
+    years: "Régebbi lap",
+    pts: { A: ["a", "0", "0"], B: ["a", "b", "0"], C: ["0", "b", "0"], D: ["a", "0", "c"], E: ["a", "b", "c"] },
+    box: true,
+    F1: "A", F2: { at: "B", dir: [-1, 0, 0] }, F3: { at: "E", dir: [0, 0, -1] },
+    M1: "C", M2: { at: "D", dir: [0, 1, 0] },
+    example: { a: "0.2", b: "0.4", c: "0.4", F1x: "1", F1y: "-2", F1z: "-1", F2: "0.9", F3: "1.3", M1x: "-2", M1y: "1", M1z: "0.3", M2: "0.5" },
+    exampleNote: "Régebbi lap adatai; a kidolgozásban szereplő eredmény M_O = (−2.52; 1.96; 0.26).",
+  },
 ];
-const FIELDS = [
-  { id: "a",   tex: "a",      g: "geo",    def: "0.3", positive: true },
-  { id: "b",   tex: "b",      g: "geo",    def: "0.6", positive: true },
-  { id: "c",   tex: "c",      g: "geo",    def: "0.5", positive: true },
-  { id: "F1x", tex: "F_{1x}", g: "f1",     def: "-2" },
-  { id: "F1y", tex: "F_{1y}", g: "f1",     def: "-1" },
-  { id: "F1z", tex: "F_{1z}", g: "f1",     def: "",   own: true },
-  { id: "F2x", tex: "F_{2x}", g: "f2",     def: "0" },
-  { id: "F2y", tex: "F_{2y}", g: "f2",     def: "2" },
-  { id: "F2z", tex: "F_{2z}", g: "f2",     def: "0" },
-  { id: "F3x", tex: "F_{3x}", g: "f3",     def: "0" },
-  { id: "F3y", tex: "F_{3y}", g: "f3",     def: "0" },
-  { id: "F3z", tex: "F_{3z}", g: "f3",     def: "",   own: true },
-  { id: "M1x", tex: "M_{1x}", g: "m1",     def: "0.8" },
-  { id: "M1y", tex: "M_{1y}", g: "m1",     def: "1.3" },
-  { id: "M1z", tex: "M_{1z}", g: "m1",     def: "",   own: true },
-  { id: "M2x", tex: "M_{2x}", g: "m2",     def: "0" },
-  { id: "M2y", tex: "M_{2y}", g: "m2",     def: "0" },
-  { id: "M2z", tex: "M_{2z}", g: "m2",     def: "-2.1" },
-];
-const EXAMPLE = { F1z: "0.7", F3z: "2.1", M1z: "0.5" };
+const presetById = id => PRESETS.find(p => p.id === id) || PRESETS[0];
+const AXN = ["x", "y", "z"];
+const dirLabel = d => { const i = d.findIndex(x => x !== 0); return (d[i] > 0 ? "+" : "−") + AXN[i]; };
+const dirTexLabel = d => { const i = d.findIndex(x => x !== 0); return (d[i] > 0 ? "+" : "-") + AXN[i]; };
+const inPt = pt => pt === "A" ? "A-ban" : pt + "-ben";
+const art = pt => (pt === "A" || pt === "E") ? "az" : "a";
+
+/* ---------- fields ---------- */
+const FIELD = {
+  a: { tex: "a", def: "0.3", positive: true }, b: { tex: "b", def: "0.6", positive: true }, c: { tex: "c", def: "0.5", positive: true },
+  F1x: { tex: "F_{1x}", def: "-2" }, F1y: { tex: "F_{1y}", def: "-1" }, F1z: { tex: "F_{1z}", def: "", own: true },
+  F2: { tex: "F_{2}", def: "2" }, F2x: { tex: "F_{2x}", def: "" }, F2y: { tex: "F_{2y}", def: "" }, F2z: { tex: "F_{2z}", def: "" },
+  F3: { tex: "F_{3}", def: "", own: true }, F3x: { tex: "F_{3x}", def: "" }, F3y: { tex: "F_{3y}", def: "" }, F3z: { tex: "F_{3z}", def: "" },
+  M1x: { tex: "M_{1x}", def: "0.8" }, M1y: { tex: "M_{1y}", def: "1.3" }, M1z: { tex: "M_{1z}", def: "", own: true },
+  M2: { tex: "M_{2}", def: "2.1" }, M2x: { tex: "M_{2x}", def: "" }, M2y: { tex: "M_{2y}", def: "" }, M2z: { tex: "M_{2z}", def: "" },
+};
+function groupsFor(pr, manual) {
+  const vecOrScalar = (k) => manual ? [k + "x", k + "y", k + "z"] : [k];
+  return [
+    { title: "Geometria", unit: "m", ids: ["a", "b", "c"] },
+    { title: `F₁ erő – ${pr.F1} pontban`, unit: "kN", ids: ["F1x", "F1y", "F1z"] },
+    { title: `F₂ erő – ${pr.F2.at} pontban${manual ? "" : ` <span>(${dirLabel(pr.F2.dir)} irányú)</span>`}`, unit: "kN", ids: vecOrScalar("F2") },
+    { title: `F₃ erő – ${pr.F3.at} pontban${manual ? "" : ` <span>(${dirLabel(pr.F3.dir)} irányú)</span>`}`, unit: "kN", ids: vecOrScalar("F3") },
+    { title: "M₁ erőpár", unit: "kNm", ids: ["M1x", "M1y", "M1z"] },
+    { title: `M₂ erőpár${manual ? "" : ` <span>(${dirLabel(pr.M2.dir)} irányú)</span>`}`, unit: "kNm", ids: vecOrScalar("M2") },
+  ];
+}
+const state = { preset: "A", manual: false, raw: {} };
+function defaultsRaw() { const o = {}; Object.keys(FIELD).forEach(k => o[k] = FIELD[k].def); return o; }
 
 /* ---------- helpers ---------- */
 function renderTex(el, tex, display) {
@@ -245,7 +329,6 @@ function renderTex(el, tex, display) {
   el.classList.add("tex-fallback");
 }
 function rich(el, str) {
-  // text with inline $...$ math
   el.textContent = "";
   str.split(/(\$[^$]+\$)/).forEach(part => {
     if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
@@ -279,6 +362,7 @@ const mul = (x, y) => T`${p(x)}\cdot ${p(y)}`;
 const col = v => T`\begin{bmatrix}${v.map(x => fmt(x)).join(T`\\`)}\end{bmatrix}`;
 const colS = arr => T`\begin{bmatrix}${arr.join(T`\\`)}\end{bmatrix}`;
 const tri = v => `(${v.map(x => fmt(x)).join(T`;\ `)})`;
+const symTri = arr => `(${arr.join(T`;\ `)})`;
 const det = (r, F) => T`\begin{vmatrix}\mathbf i&\mathbf j&\mathbf k\\ ${fmt(r[0])}&${fmt(r[1])}&${fmt(r[2])}\\ ${fmt(F[0])}&${fmt(F[1])}&${fmt(F[2])}\end{vmatrix}`;
 const U = { m: T`\ \text{m}`, kN: T`\ \text{kN}`, kNm: T`\ \text{kNm}`, kN2: T`\ \text{kN}^2` };
 
@@ -287,73 +371,145 @@ const sub = (u, v) => [u[0] - v[0], u[1] - v[1], u[2] - v[2]];
 const scale = (u, k) => u.map(x => x * k);
 const dot = (u, v) => u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
 const cross = (u, v) => [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+const nz = x => Math.abs(x) > 1e-12;
+// numeric substitution of r x F, leaving out products with a zero factor
+function crossSub(r, F) {
+  const term = (u, w) => (nz(u) && nz(w)) ? mul(u, w) : null;
+  const comp = (i, j) => {
+    const A = term(r[i], F[j]), B = term(r[j], F[i]);
+    if (!A && !B) return "0";
+    if (!B) return A;
+    if (!A) return "-" + B;
+    return `${A} - ${B}`;
+  };
+  return [comp(1, 2), comp(2, 0), comp(0, 1)];
+}
+const evalSym = (s, v) => s === "a" ? v.a : s === "b" ? v.b : s === "c" ? v.c : 0;
+const ptsOf = (pr, v) => { const o = {}; Object.keys(pr.pts).forEach(k => o[k] = pr.pts[k].map(s => evalSym(s, v))); return o; };
 
-/* ---------- inputs ---------- */
-const inputs = {};
-function buildInputs() {
-  const host = $("#inputs");
-  GROUPS.forEach(g => {
-    const wrap = document.createElement("div");
-    wrap.className = "group";
-    wrap.innerHTML = `<p class="group-title">${g.title} <span>[${g.unit}]</span></p><div class="fields"></div>`;
-    const fieldsEl = $(".fields", wrap);
-    FIELDS.filter(f => f.g === g.key).forEach(f => {
-      const d = document.createElement("div");
-      d.className = "field" + (f.own ? " own" : "");
-      const id = "in-" + f.id;
-      d.innerHTML = `<label for="${id}"><span class="lt"></span>${f.own ? '<span class="tag">saját</span>' : ""}</label>
-        <input id="${id}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="${f.own ? "saját érték" : ""}">`;
-      renderTex($(".lt", d), f.tex, false);
-      const inp = $("input", d);
-      inputs[f.id] = { el: inp, box: d, f };
-      fieldsEl.appendChild(d);
-    });
-    host.appendChild(wrap);
-  });
-  const order = FIELDS.map(f => inputs[f.id].el);
-  order.forEach((el, i) => {
-    el.addEventListener("input", schedule);
-    el.addEventListener("keydown", e => {
-      if (e.key === "Enter") { e.preventDefault(); (order[i + 1] || order[0]).focus(); }
-    });
-  });
-}
-function setValues(obj) {
-  FIELDS.forEach(f => { if (obj[f.id] !== undefined) inputs[f.id].el.value = obj[f.id]; });
-}
-function defaults() { const o = {}; FIELDS.forEach(f => o[f.id] = f.def); return o; }
+/* ---------- storage ---------- */
 function save() {
-  try {
-    const o = {}; FIELDS.forEach(f => o[f.id] = inputs[f.id].el.value);
-    localStorage.setItem(STORE_KEY, JSON.stringify(o));
-  } catch (e) { /* storage unavailable */ }
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
 }
 function load() {
   try { const s = localStorage.getItem(STORE_KEY); if (s) return JSON.parse(s); } catch (e) { /* ignore */ }
   return null;
 }
+
+/* ---------- layout picker ---------- */
+function buildPresets() {
+  const host = $("#presets");
+  host.innerHTML = "";
+  PRESETS.forEach(pr => {
+    const lab = document.createElement("label");
+    lab.className = "preset" + (pr.id === state.preset ? " selected" : "");
+    lab.innerHTML = `<input type="radio" name="preset" value="${pr.id}"${pr.id === state.preset ? " checked" : ""}>
+      <svg class="thumb scene" role="img" aria-label="${pr.title} ábrája"></svg>
+      <div class="preset-head"><span class="badge">${pr.id}</span>${pr.box ? "változat · hasáb" : "változat"}</div>
+      <p class="preset-desc">${pr.desc}</p>
+      <p class="preset-years">${pr.years}</p>`;
+    drawThumb($("svg", lab), pr);
+    $("input", lab).addEventListener("change", () => selectPreset(pr.id));
+    host.appendChild(lab);
+  });
+}
+function selectPreset(id) {
+  state.preset = id;
+  document.querySelectorAll(".preset").forEach(el => el.classList.toggle("selected", $("input", el).value === id));
+  $("#example-note").hidden = true;
+  buildInputs();
+  update();
+}
+
+/* ---------- inputs ---------- */
+function buildInputs() {
+  const pr = presetById(state.preset);
+  const host = $("#inputs");
+  host.innerHTML = "";
+  const ownActive = pr.id === "A";
+  $("#inputs-sub").textContent = ownActive
+    ? "Minden értéket a saját lapod táblázatából vegyél. Az előre kitöltött számok a 2026/27-es A változatú lapokon közösek; a kiemelt mezők ott is eltérnek."
+    : "Minden értéket a saját lapod táblázatából vegyél. Az előre kitöltött számok a 2026/27-es lapokról valók, ezeket írd felül.";
+  const order = [];
+  groupsFor(pr, state.manual).forEach(g => {
+    const wrap = document.createElement("div");
+    wrap.className = "group";
+    wrap.innerHTML = `<p class="group-title">${g.title} <span>[${g.unit}]</span></p><div class="fields"></div>`;
+    const fieldsEl = $(".fields", wrap);
+    g.ids.forEach(id => {
+      const f = FIELD[id];
+      const own = ownActive && f.own;
+      const d = document.createElement("div");
+      d.className = "field" + (own ? " own" : "");
+      d.dataset.id = id;
+      d.innerHTML = `<label for="in-${id}"><span class="lt"></span>${own ? '<span class="tag">saját</span>' : ""}</label>
+        <input id="in-${id}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="${own ? "saját érték" : ""}">`;
+      renderTex($(".lt", d), f.tex, false);
+      const inp = $("input", d);
+      inp.value = state.raw[id] ?? "";
+      inp.addEventListener("input", () => { state.raw[id] = inp.value; $("#example-note").hidden = true; schedule(); });
+      order.push(inp);
+      fieldsEl.appendChild(d);
+    });
+    host.appendChild(wrap);
+  });
+  order.forEach((el, i) => el.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); (order[i + 1] || order[0]).focus(); }
+  }));
+  $("#manual").checked = state.manual;
+  $("#footer-geo").textContent = geoText(pr);
+}
+function geoText(pr) {
+  const pts = Object.keys(pr.pts).map(k => `${k} = (${pr.pts[k].join("; ")})`).join(", ");
+  const d = x => dirLabel(x);
+  return `Az ábra értelmezése (${pr.title}): ${pts}. F₁ ${art(pr.F1)} ${pr.F1}, F₂ ${art(pr.F2.at)} ${pr.F2.at} (${d(pr.F2.dir)}), F₃ ${art(pr.F3.at)} ${pr.F3.at} (${d(pr.F3.dir)}) pontban hat; M₂ ${d(pr.M2.dir)} irányú, M₁ és M₂ szabad vektorok.`;
+}
+function setManual(on) {
+  const pr = presetById(state.preset);
+  if (on) {
+    [["F2", pr.F2.dir], ["F3", pr.F3.dir], ["M2", pr.M2.dir]].forEach(([k, dir]) => {
+      const s = parseNum(state.raw[k]);
+      if (isFinite(s)) ["x", "y", "z"].forEach((ax, i) => { state.raw[k + ax] = fmt(s * dir[i] + 0); });
+    });
+  }
+  state.manual = on;
+  buildInputs();
+  update();
+}
 function read() {
-  const v = {}, missing = [], bad = [];
-  FIELDS.forEach(f => {
-    const raw = inputs[f.id].el.value;
+  const pr = presetById(state.preset);
+  const ids = groupsFor(pr, state.manual).flatMap(g => g.ids);
+  const num = {}, missing = [], bad = [];
+  ids.forEach(id => {
+    const f = FIELD[id], raw = state.raw[id] ?? "";
     const x = parseNum(raw);
-    let ok = isFinite(x) && (!f.positive || x > 0);
-    inputs[f.id].box.classList.toggle("bad", raw.trim() !== "" && !ok);
+    const ok = isFinite(x) && (!f.positive || x > 0);
+    const box = document.querySelector(`.field[data-id="${id}"]`);
+    if (box) box.classList.toggle("bad", raw.trim() !== "" && !ok);
     if (raw.trim() === "") missing.push(f);
     else if (!ok) bad.push(f);
-    v[f.id] = x;
+    num[id] = x;
   });
-  return { v, missing, bad };
+  const vec = k => state.manual ? [num[k + "x"], num[k + "y"], num[k + "z"]] : null;
+  const v = {
+    a: num.a, b: num.b, c: num.c,
+    F1: [num.F1x, num.F1y, num.F1z], M1: [num.M1x, num.M1y, num.M1z],
+    F2s: num.F2, F3s: num.F3, M2s: num.M2,
+    F2v: vec("F2") || scale(pr.F2.dir, num.F2),
+    F3v: vec("F3") || scale(pr.F3.dir, num.F3),
+    M2v: vec("M2") || scale(pr.M2.dir, num.M2),
+    manual: state.manual,
+  };
+  return { v, missing, bad, pr };
 }
 
 /* ---------- model ---------- */
-function compute(v) {
-  const { a, b, c, F1x, F1y, F1z, F2x, F2y, F2z, F3x, F3y, F3z, M1x, M1y, M1z, M2x, M2y, M2z } = v;
-  const r = { A: [a, 0, c], B: [a, 0, 0], C: [a, b, 0], D: [0, b, 0], E: [0, b, c] };
-  const F1 = [F1x, F1y, F1z], F2v = [F2x, F2y, F2z], F3v = [F3x, F3y, F3z];
-  const M1 = [M1x, M1y, M1z], M2v = [M2x, M2y, M2z];
+function compute(v, pr) {
+  const pts = ptsOf(pr, v);
+  const rF1 = pts[pr.F1], rF2 = pts[pr.F2.at], rF3 = pts[pr.F3.at];
+  const F1 = v.F1, F2v = v.F2v.map(x => x + 0), F3v = v.F3v.map(x => x + 0), M1 = v.M1, M2v = v.M2v.map(x => x + 0);
   const F = add(F1, F2v, F3v);
-  const m1 = cross(r.B, F1), m2 = cross(r.E, F2v), m3 = cross(r.C, F3v);
+  const m1 = cross(rF1, F1), m2 = cross(rF2, F2v), m3 = cross(rF3, F3v);
   const MO = add(m1, m2, m3, M1, M2v);
   const F2n = dot(F, F), Fn = Math.sqrt(F2n);
   const MOF = dot(MO, F);
@@ -364,7 +520,7 @@ function compute(v) {
   const rGxF = cross(rG, F);
   const MG = sub(MO, rGxF);
   const MG2 = zeroF ? [NaN, NaN, NaN] : scale(F, MOF / F2n);
-  return { r, F1, F2v, F3v, M1, M2v, F, m1, m2, m3, MO, F2n, Fn, MOF, Mf, FxMO, rG, rGxF, MG, MG2, zeroF };
+  return { pr, pts, rF1, rF2, rF3, F1, F2v, F3v, M1, M2v, F, m1, m2, m3, MO, F2n, Fn, MOF, Mf, FxMO, rG, rGxF, MG, MG2, zeroF };
 }
 
 /* ---------- answers ---------- */
@@ -461,33 +617,34 @@ function item(it) {
   if (it.p !== undefined) { const e = document.createElement("p"); if (it.cls) e.className = it.cls; rich(e, it.p); return e; }
   const e = document.createElement("div"); e.className = "math"; renderTex(e, it.m, true); return e;
 }
+function loadLine(sym, name, vec, scalar, spec, unit) {
+  if (scalar == null) return T`\mathbf ${sym} &= (${name.replace(/\}$/, "")}x};\ ${name.replace(/\}$/, "")}y};\ ${name.replace(/\}$/, "")}z}) &&= ${tri(vec)}${unit}`;
+  const dt = symTri(spec.dir.map(String));
+  return T`\mathbf ${sym} &= ${name}\cdot${dt} = ${fmt(scalar)}\cdot${dt} &&= ${tri(vec)}${unit}`;
+}
 
 function renderSteps(v, R) {
   const host = $("#steps");
   host.innerHTML = "";
-  const { a, b, c, F1x, F1y, F1z, F2x, F2y, F2z, F3x, F3y, F3z, M1x, M1y, M1z, M2x, M2y, M2z } = v;
-  const r = R.r;
+  const pr = R.pr;
+  const keys = Object.keys(pr.pts);
 
   // 1. Geometry & loads (+ figure)
   const s1left = document.createElement("div");
+  const posLines = keys.map(k => T`\mathbf r_${k} &= ${symTri(pr.pts[k])} &&= ${tri(R.pts[k])}${U.m}`).join(T`\\`);
+  const manual = v.manual;
   [
-    { p: "Az ábra alapján az O origóból a pontokba mutató helyvektorok (B az x, D az y tengelyen van):" },
+    { p: `Az ábra alapján (${pr.title}) az O origóból a pontokba mutató helyvektorok:` },
+    { m: T`\begin{aligned}${posLines}\end{aligned}` },
+    { p: manual ? "A terhelések (komponensenként megadva):" : "A terhelések; az F₂, F₃ és M₂ irányát az elrendezés adja:" },
     { m: T`\begin{aligned}
-      \mathbf r_A &= (a;\ 0;\ c) &&= ${tri(r.A)}${U.m}\\
-      \mathbf r_B &= (a;\ 0;\ 0) &&= ${tri(r.B)}${U.m}\\
-      \mathbf r_C &= (a;\ b;\ 0) &&= ${tri(r.C)}${U.m}\\
-      \mathbf r_D &= (0;\ b;\ 0) &&= ${tri(r.D)}${U.m}\\
-      \mathbf r_E &= (0;\ b;\ c) &&= ${tri(r.E)}${U.m}
+      \mathbf F_1 &= (F_{1x};\ F_{1y};\ F_{1z}) &&= ${tri(R.F1)}${U.kN}\\
+      ${loadLine("F_2", "F_{2}", R.F2v, manual ? null : v.F2s, pr.F2, U.kN)}\\
+      ${loadLine("F_3", "F_{3}", R.F3v, manual ? null : v.F3s, pr.F3, U.kN)}\\
+      \mathbf M_1 &= (M_{1x};\ M_{1y};\ M_{1z}) &&= ${tri(R.M1)}${U.kNm}\\
+      ${loadLine("M_2", "M_{2}", R.M2v, manual ? null : v.M2s, pr.M2, U.kNm)}
     \end{aligned}` },
-    { p: "A terhelések az ábra szerinti irányokkal:" },
-    { m: T`\begin{aligned}
-      \mathbf F_1 &= (F_{1x};\ F_{1y};\ F_{1z}) &&= ${tri(R.F1)}${U.kN} && \text{(B-ben)}\\
-      \mathbf F_2 &= (F_{2x};\ F_{2y};\ F_{2z}) &&= ${tri(R.F2v)}${U.kN} && \text{(E-ben)}\\
-      \mathbf F_3 &= (F_{3x};\ F_{3y};\ F_{3z}) &&= ${tri(R.F3v)}${U.kN} && \text{(C-ben)}\\
-      \mathbf M_1 &= (M_{1x};\ M_{1y};\ M_{1z}) &&= ${tri(R.M1)}${U.kNm} && \text{(erőpár)}\\
-      \mathbf M_2 &= (M_{2x};\ M_{2y};\ M_{2z}) &&= ${tri(R.M2v)}${U.kNm} && \text{(erőpár)}
-    \end{aligned}` },
-    { p: "Az $\\mathbf M_1$ és $\\mathbf M_2$ erőpárok szabad vektorok: a nyomatékuk bármely pontra ugyanaz, ezért a helyük nem számít.", cls: "note" },
+    { p: `Támadáspontok: $\\mathbf F_1$ ${art(pr.F1)} ${inPt(pr.F1)}, $\\mathbf F_2$ ${art(pr.F2.at)} ${inPt(pr.F2.at)}, $\\mathbf F_3$ ${art(pr.F3.at)} ${inPt(pr.F3.at)} hat. Az $\\mathbf M_1$ és $\\mathbf M_2$ erőpárok szabad vektorok: a nyomatékuk bármely pontra ugyanaz, ezért a helyük nem számít.`, cls: "note" },
   ].forEach(it => s1left.appendChild(item(it)));
   const layout = document.createElement("div");
   layout.className = "step-layout";
@@ -496,40 +653,34 @@ function renderSteps(v, R) {
   host.appendChild(step("Geometria és terhelések", [layout]));
 
   // 2. Resultant force
+  const fc = i => T`${fmt(R.F1[i])} + ${p(R.F2v[i])} + ${p(R.F3v[i])}`;
   host.appendChild(step("Az eredő erő", [
     { m: T`\mathbf F = \mathbf F_1+\mathbf F_2+\mathbf F_3 = ${col(R.F1)} + ${col(R.F2v)} + ${col(R.F3v)} = ${col(R.F)}${U.kN}` },
     { m: T`\begin{aligned}
-      F_x &= F_{1x} + F_{2x} + F_{3x} &&= ${fmt(F1x)} + ${p(F2x)} + ${p(F3x)} &&= ${fmt(R.F[0])}${U.kN}\\
-      F_y &= F_{1y} + F_{2y} + F_{3y} &&= ${fmt(F1y)} + ${p(F2y)} + ${p(F3y)} &&= ${fmt(R.F[1])}${U.kN}\\
-      F_z &= F_{1z} + F_{2z} + F_{3z} &&= ${fmt(F1z)} + ${p(F2z)} + ${p(F3z)} &&= ${fmt(R.F[2])}${U.kN}
+      F_x &= F_{1x} + F_{2x} + F_{3x} &&= ${fc(0)} &&= ${fmt(R.F[0])}${U.kN}\\
+      F_y &= F_{1y} + F_{2y} + F_{3y} &&= ${fc(1)} &&= ${fmt(R.F[1])}${U.kN}\\
+      F_z &= F_{1z} + F_{2z} + F_{3z} &&= ${fc(2)} &&= ${fmt(R.F[2])}${U.kN}
     \end{aligned}` },
     { m: T`|\mathbf F| = \sqrt{F_x^2+F_y^2+F_z^2} = \sqrt{${p(R.F[0])}^2+${p(R.F[1])}^2+${p(R.F[2])}^2} = \sqrt{${fmt(R.F2n)}} = ${fmt(R.Fn)}${U.kN}` },
   ]));
 
   // 3. Moment about O
+  const momentBlock = (P, i, r, Fv, m) => ({ m: T`\begin{aligned}
+      \mathbf r_${P}\times\mathbf F_${i} &= ${det(r, Fv)}\\[4pt]
+      &= ${colS(crossSub(r, Fv))} = ${col(m)}${U.kNm}
+    \end{aligned}` });
+  const mc = i => T`${p(R.m1[i])} + ${p(R.m2[i])} + ${p(R.m3[i])} + ${p(R.M1[i])} + ${p(R.M2v[i])}`;
+  const axn = ["x", "y", "z"];
   host.appendChild(step("Redukálás az origóba: az $\\mathbf M_O$ nyomaték", [
     { p: "Egy erő nyomatéka az O pontra $\\mathbf M_O(\\mathbf F_i)=\\mathbf r_i\\times\\mathbf F_i$, ahol $\\mathbf r_i$ az erő támadáspontjába mutat." },
-    { m: T`\begin{aligned}
-      \mathbf r_B\times\mathbf F_1 &= ${det(r.B, R.F1)} = ${colS(["0", T`-a\,F_{1z}`, T`a\,F_{1y}`])} = ${colS(["0", T`-${mul(a, F1z)}`, mul(a, F1y)])} = ${col(R.m1)}${U.kNm}
-    \end{aligned}` },
-    { m: T`\begin{aligned}
-      \mathbf r_E\times\mathbf F_2 &= ${det(r.E, R.F2v)} = ${colS([T`b\,F_{2z}-c\,F_{2y}`, T`c\,F_{2x}`, T`-b\,F_{2x}`])} = ${colS([T`${mul(b, F2z)}-${mul(c, F2y)}`, mul(c, F2x), T`-${mul(b, F2x)}`])} = ${col(R.m2)}${U.kNm}
-    \end{aligned}` },
-    { m: T`\begin{aligned}
-      \mathbf r_C\times\mathbf F_3 &= ${det(r.C, R.F3v)} = ${colS([T`b\,F_{3z}`, T`-a\,F_{3z}`, T`a\,F_{3y}-b\,F_{3x}`])} = ${colS([mul(b, F3z), T`-${mul(a, F3z)}`, T`${mul(a, F3y)}-${mul(b, F3x)}`])} = ${col(R.m3)}${U.kNm}
-    \end{aligned}` },
+    momentBlock(pr.F1, 1, R.rF1, R.F1, R.m1),
+    momentBlock(pr.F2.at, 2, R.rF2, R.F2v, R.m2),
+    momentBlock(pr.F3.at, 3, R.rF3, R.F3v, R.m3),
     { p: "Ehhez hozzáadjuk a két erőpárt:" },
-    { m: T`\mathbf M_O = \mathbf r_B\times\mathbf F_1+\mathbf r_E\times\mathbf F_2+\mathbf r_C\times\mathbf F_3+\mathbf M_1+\mathbf M_2` },
+    { m: T`\mathbf M_O = \mathbf r_${pr.F1}\times\mathbf F_1+\mathbf r_${pr.F2.at}\times\mathbf F_2+\mathbf r_${pr.F3.at}\times\mathbf F_3+\mathbf M_1+\mathbf M_2` },
     { m: T`\mathbf M_O = ${col(R.m1)} + ${col(R.m2)} + ${col(R.m3)} + ${col(R.M1)} + ${col(R.M2v)} = ${col(R.MO)}${U.kNm}` },
-    { p: "Komponensenként, zárt alakban:" },
-    { m: T`\begin{aligned}
-      M_{Ox} &= b\,F_{2z} - c\,F_{2y} + b\,F_{3z} + M_{1x} + M_{2x}\\
-             &= ${mul(b, F2z)} - ${mul(c, F2y)} + ${mul(b, F3z)} + ${p(M1x)} + ${p(M2x)} = \mathbf{${fixed(R.MO[0])}}${U.kNm}\\[10pt]
-      M_{Oy} &= -a\,F_{1z} + c\,F_{2x} - a\,F_{3z} + M_{1y} + M_{2y}\\
-             &= -${mul(a, F1z)} + ${mul(c, F2x)} - ${mul(a, F3z)} + ${p(M1y)} + ${p(M2y)} = \mathbf{${fixed(R.MO[1])}}${U.kNm}\\[10pt]
-      M_{Oz} &= a\,F_{1y} - b\,F_{2x} + a\,F_{3y} - b\,F_{3x} + M_{1z} + M_{2z}\\
-             &= ${mul(a, F1y)} - ${mul(b, F2x)} + ${mul(a, F3y)} - ${mul(b, F3x)} + ${p(M1z)} + ${p(M2z)} = \mathbf{${fixed(R.MO[2])}}${U.kNm}
-    \end{aligned}` },
+    { p: "Komponensenként:" },
+    { m: T`\begin{aligned}${[0, 1, 2].map(i => T`M_{O${axn[i]}} &= ${mc(i)} &&= \mathbf{${fixed(R.MO[i])}}${U.kNm}`).join(T`\\`)}\end{aligned}` },
     { m: T`[\mathbf F,\ \mathbf M_O]_O = \left[\ ${col(R.F)}${U.kN},\ \ ${col(R.MO)}${U.kNm}\ \right]_O` },
   ]));
 
@@ -592,28 +743,39 @@ function renderSteps(v, R) {
 /* ---------- figure ---------- */
 function figureEl(v, R) {
   const fig = document.createElement("figure");
-  fig.innerHTML = `<div class="fig-box"><svg id="fig" role="img" aria-label="Méretarányos axonometrikus vázlat"></svg></div>
+  fig.innerHTML = `<div class="fig-box"><svg id="fig" class="scene" role="img" aria-label="Méretarányos axonometrikus vázlat"></svg></div>
     <div class="legend"><span><i style="background:var(--accent)"></i>adott terhelések</span><span><i style="background:var(--res)"></i>eredő F, M<sub>G</sub>, centrális egyenes</span></div>
     <figcaption>Méretarányos vázlat a megadott a, b, c értékekkel. Az erő- és nyomatékvektorok hossza külön-külön arányos. Kettős nyíl: nyomatékvektor.${R && !R.zeroF ? ` A G = (${R.rG.map(x => fixed(x)).join("; ")}) m pontig vezető szaggatott vonal a koordinátákat mutatja (O → x<sub>G</sub> → y<sub>G</sub> → z<sub>G</sub>), a negatív féltengelyek pontozva. Az axonometrikus képen a derékszögek torzulnak, ezért az OG szakasz nem látszik merőlegesnek az e egyenesre, és a negatív koordinátájú pontok az origó „elé” vetülhetnek.` : ""}</figcaption>`;
-  drawFigure($("svg", fig), v, R);
+  const L = Math.max(v.a, v.b, v.c);
+  drawScene($("svg", fig), R.pr, R.pts, L, {
+    F1: R.F1, F2: R.F2v, F3: R.F3v, M1: R.M1, M2: R.M2v,
+    res: R.zeroF ? null : { F: R.F, Fn: R.Fn, G: R.rG, MG: R.MG },
+  }, {});
   return fig;
 }
-function drawFigure(svg, v, R) {
-  const { a, b, c } = v;
-  const L = Math.max(a, b, c);
-  const s = 165 / L;
+function drawThumb(svg, pr) {
+  const v = { a: 0.5, b: 0.55, c: 0.6 };
+  drawScene(svg, pr, ptsOf(pr, v), 0.6, {
+    F1: [0.35, 0.3, -1], F2: pr.F2.dir, F3: pr.F3.dir, M1: [0.45, -0.55, 0.7], M2: pr.M2.dir, res: null,
+  }, { mini: true });
+}
+function drawScene(svg, pr, P3, L, loads, opts) {
+  const mini = !!opts.mini;
+  const s = (mini ? 150 : 165) / L;
+  const HS = mini ? 17 : 12, LD = mini ? 22 : 16;
   const EX = [-0.82, 0.34], EY = [0.78, 0.40];
   const P = q => [(q[0] * EX[0] + q[1] * EY[0]) * s, (q[0] * EX[1] + q[1] * EY[1] - q[2]) * s];
   const out = { axis: [], guide: [], rods: [], caxis: [], load: [], res: [], dots: [], text: [] };
   const pts = [];
   const f1 = n => n.toFixed(1);
   const track = (...ps) => ps.forEach(q => pts.push(q));
+  const plus = (q, u, k) => [q[0] + u[0] * k, q[1] + u[1] * k, q[2] + u[2] * k];
 
   function head(tip, d, h, w) {
     const px = -d[1], py = d[0];
     return `<polygon points="${f1(tip[0])},${f1(tip[1])} ${f1(tip[0] - d[0] * h + px * w)},${f1(tip[1] - d[1] * h + py * w)} ${f1(tip[0] - d[0] * h - px * w)},${f1(tip[1] - d[1] * h - py * w)}"/>`;
   }
-  function arrow(bucket, q0, q1, dbl, hs = 12) {
+  function arrow(bucket, q0, q1, dbl, hs = HS) {
     const A = P(q0), B = P(q1);
     const dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy);
     if (len < 1) return null;
@@ -621,32 +783,33 @@ function drawFigure(svg, v, R) {
     const h = Math.min(hs, len * 0.4), w = h * 0.4;
     const back = dbl ? h * 1.75 : h * 0.8;
     const E = [B[0] - d[0] * back, B[1] - d[1] * back];
-    let svg = `<line x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(E[0])}" y2="${f1(E[1])}"/>` + head(B, d, h, w);
-    if (dbl) svg += head([B[0] - d[0] * h * 0.85, B[1] - d[1] * h * 0.85], d, h, w);
-    bucket.push(svg);
+    let str = `<line x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(E[0])}" y2="${f1(E[1])}"/>` + head(B, d, h, w);
+    if (dbl) str += head([B[0] - d[0] * h * 0.85, B[1] - d[1] * h * 0.85], d, h, w);
+    bucket.push(str);
     track(A, B);
     return { A, B, d };
   }
   function label(pt, main, subTxt, cls = "") {
     if (!pt) return;
     const [x, y] = pt;
-    track([x - 14, y - 12], [x + 16, y + 12]);
+    track([x - (mini ? 18 : 14), y - (mini ? 16 : 12)], [x + (mini ? 22 : 16), y + (mini ? 16 : 12)]);
     out.text.push(`<text x="${f1(x)}" y="${f1(y)}" class="${cls}">${main}${subTxt ? `<tspan class="s" dy="5">${subTxt}</tspan>` : ""}</text>`);
   }
-  const at = (q, dx, dy) => { const A = P(q); return [A[0] + dx, A[1] + dy]; };
-  const beyond = (ar, dist = 16, end = "B") => {
+  const beyond = (ar, dist = LD, end = "B") => {
     if (!ar) return null;
     const base = ar[end], sgn = end === "B" ? 1 : -1;
     return [base[0] + ar.d[0] * dist * sgn, base[1] + ar.d[1] * dist * sgn];
   };
+  const seg = (cls, q0, q1) => { const A = P(q0), B = P(q1); track(A, B); return `<line class="${cls}" x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(B[0])}" y2="${f1(B[1])}"/>`; };
 
-  const all = R && !isNaN(R.F[0]);
-  const G = all && !R.zeroF ? R.rG : null;
+  const res = loads.res;
+  const G = res ? res.G : null;
+  const O = [0, 0, 0];
 
   // axes
-  const ext = [a, b, c].map(x => x + 0.45 * L);
-  if (G) { ext[0] = Math.max(ext[0], G[0] + 0.3 * L); ext[1] = Math.max(ext[1], G[1] + 0.3 * L); ext[2] = Math.max(ext[2], G[2] + 0.3 * L); }
-  const O = [0, 0, 0];
+  const keys = Object.keys(P3);
+  const ext = [0, 1, 2].map(i => Math.max(...keys.map(k => P3[k][i]), 0) + (mini ? 0.3 : 0.45) * L);
+  if (G) for (let i = 0; i < 3; i++) ext[i] = Math.max(ext[i], G[i] + 0.3 * L);
   const ax = arrow(out.axis, O, [ext[0], 0, 0], false, 9);
   const ay = arrow(out.axis, O, [0, ext[1], 0], false, 9);
   const az = arrow(out.axis, O, [0, 0, ext[2]], false, 9);
@@ -654,75 +817,84 @@ function drawFigure(svg, v, R) {
   label(beyond(ay, 12), "y", "", "t-axis");
   label(beyond(az, 12), "z", "", "t-axis");
   out.dots.push(`<circle class="odot" cx="0" cy="0" r="2.6"/>`);
-  label(at(O, -12, -10), "O", "", "t-axis");
+  label([-12, -10], "O", "", "t-axis");
 
-  // rods
-  const poly = [R.r.A, R.r.B, R.r.C, R.r.D, R.r.E].map(P);
-  track(...poly);
-  const pstr = poly.map(q => `${f1(q[0])},${f1(q[1])}`).join(" ");
-  out.rods.push(`<polyline class="rod-edge" points="${pstr}"/><polyline class="rod" points="${pstr}"/>`);
-
-  if (all) {
-    const fMax = Math.max(Math.hypot(...R.F1), Math.hypot(...R.F2v), Math.hypot(...R.F3v), R.Fn, 1e-9);
-    const kF = 0.6 * L / fMax;
-    const mMax = Math.max(Math.hypot(...R.M1), Math.hypot(...R.M2v), G ? Math.hypot(...R.MG) : 0, 1e-9);
-    const kM = 0.6 * L / mMax;
-    const plus = (q, u, k) => [q[0] + u[0] * k, q[1] + u[1] * k, q[2] + u[2] * k];
-
-    // given loads
-    const aF1 = arrow(out.load, R.r.B, plus(R.r.B, R.F1, kF));
-    label(beyond(aF1), "F", "1", "t-load");
-    const aF2 = arrow(out.load, plus(R.r.E, R.F2v, -kF), R.r.E);
-    label(beyond(aF2, 16, "A"), "F", "2", "t-load");
-    const aF3 = arrow(out.load, R.r.C, plus(R.r.C, R.F3v, kF));
-    label(beyond(aF3), "F", "3", "t-load");
-    const aM1 = arrow(out.load, R.r.D, plus(R.r.D, R.M1, kM), true);
-    label(beyond(aM1), "M", "1", "t-load");
-    const aM2 = arrow(out.load, plus(R.r.A, R.M2v, -kM), R.r.A, true);
-    label(beyond(aM2, 16, "A"), "M", "2", "t-load");
-
-    if (G) {
-      // r_G guide, central axis, F and M_G at G
-      const PG = P(G);
-      out.guide.push(`<line class="guide" x1="0" y1="0" x2="${f1(PG[0])}" y2="${f1(PG[1])}"/>`);
-      // negative half-axes (dotted) where G lies on the negative side
-      for (let i = 0; i < 3; i++) {
-        if (G[i] < -1e-6) {
-          const q = [0, 0, 0]; q[i] = G[i] - 0.2 * L;
-          const Q = P(q); track(Q);
-          out.guide.push(`<line class="neg-axis" x1="0" y1="0" x2="${f1(Q[0])}" y2="${f1(Q[1])}"/>`);
-        }
-      }
-      // coordinate path O -> (xG,0,0) -> (xG,yG,0) -> G, so the position can be read off the axes
-      const c1 = [G[0], 0, 0], c2 = [G[0], G[1], 0];
-      const cp = [O, c1, c2, G].map(P);
-      track(...cp);
-      out.guide.push(`<polyline class="gpath" points="${cp.map(q => `${f1(q[0])},${f1(q[1])}`).join(" ")}"/>`);
-      [cp[1], cp[2]].forEach(q => out.dots.push(`<circle class="gtick" cx="${f1(q[0])}" cy="${f1(q[1])}" r="2.4"/>`));
-      const ef = scale(R.F, 1 / R.Fn);
-      const t = 0.85 * L;
-      const e0 = P(plus(G, ef, -t)), e1 = P(plus(G, ef, t * 1.25));
-      track(e0, e1);
-      out.caxis.push(`<line class="caxis" x1="${f1(e0[0])}" y1="${f1(e0[1])}" x2="${f1(e1[0])}" y2="${f1(e1[1])}"/>`);
-      const dE = [e1[0] - e0[0], e1[1] - e0[1]], lE = Math.hypot(...dE) || 1;
-      label([e1[0] + dE[0] / lE * 12, e1[1] + dE[1] / lE * 12], "e", "", "t-res");
-      const aF = arrow(out.res, G, plus(G, R.F, kF));
-      const aMG = arrow(out.res, G, plus(G, R.MG, kM), true);
-      // offset labels sideways so they don't collide when collinear
-      const side = (ar, off) => ar ? [ar.B[0] + ar.d[0] * 14 - ar.d[1] * off, ar.B[1] + ar.d[1] * 14 + ar.d[0] * off] : null;
-      if (aF) label(side(aF, 14), "F", "", "t-res");
-      if (aMG) label(side(aMG, -16), "M", "G", "t-res");
-      out.dots.push(`<circle class="dot" cx="${f1(PG[0])}" cy="${f1(PG[1])}" r="4"/>`);
-      label([PG[0] + 14, PG[1] - 12], "G", "", "t-res");
-    }
+  // structure
+  if (pr.box) {
+    const a = P3.A[0], b = P3.B[1], c = P3.D[2];
+    const V = { O: [0, 0, 0], A: [a, 0, 0], B: [a, b, 0], C: [0, b, 0], D: [a, 0, c], E: [a, b, c], F: [0, b, c], H: [0, 0, c] };
+    const vis = [["A", "B"], ["B", "C"], ["D", "E"], ["E", "F"], ["F", "H"], ["H", "D"], ["A", "D"], ["B", "E"], ["C", "F"]];
+    const hid = [["O", "A"], ["O", "C"], ["O", "H"]];
+    out.rods.push(hid.map(([u, w]) => seg("box-hidden", V[u], V[w])).join("") + vis.map(([u, w]) => seg("box-edge", V[u], V[w])).join(""));
+  } else {
+    const poly = pr.path.map(k => P(P3[k]));
+    track(...poly);
+    const pstr = poly.map(q => `${f1(q[0])},${f1(q[1])}`).join(" ");
+    out.rods.push(`<polyline class="rod-edge" points="${pstr}"/><polyline class="rod" points="${pstr}"/>`);
   }
 
-  // point labels
-  label(at(R.r.A, -18, 0), "A");
-  label(at(R.r.B, -16, -12), "B");
-  label(at(R.r.C, 0, 20), "C");
-  label(at(R.r.D, 18, 8), "D");
-  label(at(R.r.E, 18, 0), "E");
+  // loads
+  const unit = u => { const n = Math.hypot(...u); return n > 1e-12 ? scale(u, 1 / n) : u; };
+  let kF, kM, vF1 = loads.F1, vF2 = loads.F2, vF3 = loads.F3, vM1 = loads.M1, vM2 = loads.M2;
+  if (mini) {
+    [vF1, vF2, vF3, vM1, vM2] = [vF1, vF2, vF3, vM1, vM2].map(unit);
+    kF = kM = 0.42 * L;
+  } else {
+    const fMax = Math.max(Math.hypot(...vF1), Math.hypot(...vF2), Math.hypot(...vF3), res ? res.Fn : 0, 1e-9);
+    kF = 0.6 * L / fMax;
+    const mMax = Math.max(Math.hypot(...vM1), Math.hypot(...vM2), res ? Math.hypot(...res.MG) : 0, 1e-9);
+    kM = 0.6 * L / mMax;
+  }
+  const placed = (vec, pt, k, dbl, headAtPoint, main, subTxt) => {
+    const q = P3[pt];
+    const ar = headAtPoint ? arrow(out.load, plus(q, vec, -k), q, dbl) : arrow(out.load, q, plus(q, vec, k), dbl);
+    label(headAtPoint ? beyond(ar, LD, "A") : beyond(ar), main, subTxt, "t-load");
+  };
+  placed(vF1, pr.F1, kF, false, false, "F", "1");
+  placed(vF2, pr.F2.at, kF, false, !!pr.F2.head, "F", "2");
+  placed(vF3, pr.F3.at, kF, false, !!pr.F3.head, "F", "3");
+  placed(vM1, pr.M1, kM, true, false, "M", "1");
+  placed(vM2, pr.M2.at, kM, true, !!pr.M2.head, "M", "2");
+
+  if (G) {
+    const PG = P(G);
+    out.guide.push(`<line class="guide" x1="0" y1="0" x2="${f1(PG[0])}" y2="${f1(PG[1])}"/>`);
+    for (let i = 0; i < 3; i++) {
+      if (G[i] < -1e-6) {
+        const q = [0, 0, 0]; q[i] = G[i] - 0.2 * L;
+        const Q = P(q); track(Q);
+        out.guide.push(`<line class="neg-axis" x1="0" y1="0" x2="${f1(Q[0])}" y2="${f1(Q[1])}"/>`);
+      }
+    }
+    const c1 = [G[0], 0, 0], c2 = [G[0], G[1], 0];
+    const cp = [O, c1, c2, G].map(P);
+    track(...cp);
+    out.guide.push(`<polyline class="gpath" points="${cp.map(q => `${f1(q[0])},${f1(q[1])}`).join(" ")}"/>`);
+    [cp[1], cp[2]].forEach(q => out.dots.push(`<circle class="gtick" cx="${f1(q[0])}" cy="${f1(q[1])}" r="2.4"/>`));
+    const ef = scale(res.F, 1 / res.Fn);
+    const t = 0.85 * L;
+    const e0 = P(plus(G, ef, -t)), e1 = P(plus(G, ef, t * 1.25));
+    track(e0, e1);
+    out.caxis.push(`<line class="caxis" x1="${f1(e0[0])}" y1="${f1(e0[1])}" x2="${f1(e1[0])}" y2="${f1(e1[1])}"/>`);
+    const dE = [e1[0] - e0[0], e1[1] - e0[1]], lE = Math.hypot(...dE) || 1;
+    label([e1[0] + dE[0] / lE * 12, e1[1] + dE[1] / lE * 12], "e", "", "t-res");
+    const aF = arrow(out.res, G, plus(G, res.F, kF));
+    const aMG = arrow(out.res, G, plus(G, res.MG, kM), true);
+    const side = (ar, off) => ar ? [ar.B[0] + ar.d[0] * 14 - ar.d[1] * off, ar.B[1] + ar.d[1] * 14 + ar.d[0] * off] : null;
+    if (aF) label(side(aF, 14), "F", "", "t-res");
+    if (aMG) label(side(aMG, -16), "M", "G", "t-res");
+    out.dots.push(`<circle class="dot" cx="${f1(PG[0])}" cy="${f1(PG[1])}" r="4"/>`);
+    label([PG[0] + 14, PG[1] - 12], "G", "", "t-res");
+  }
+
+  // point labels, pushed away from the structure's centre
+  const scr = keys.map(k => P(P3[k]));
+  const cen = [scr.reduce((t, q) => t + q[0], 0) / scr.length, scr.reduce((t, q) => t + q[1], 0) / scr.length];
+  keys.forEach((k, i) => {
+    const q = scr[i], dx = q[0] - cen[0], dy = q[1] - cen[1], n = Math.hypot(dx, dy);
+    const o = n > 1 ? [dx / n * (mini ? 24 : 17), dy / n * (mini ? 24 : 17)] : [-17, 0];
+    label([q[0] + o[0], q[1] + o[1]], k);
+  });
 
   const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
   const pad = 16;
@@ -745,7 +917,7 @@ let timer = null;
 function schedule() { clearTimeout(timer); timer = setTimeout(update, 90); }
 function update() {
   save();
-  const { v, missing, bad } = read();
+  const { v, missing, bad, pr } = read();
   const status = $("#status");
   if (missing.length || bad.length) {
     const names = list => list.map(f => f.tex.replace(/[{}_]/g, "")).join(", ");
@@ -756,12 +928,11 @@ function update() {
     status.hidden = false;
     setAnswers(null);
     setPartials(null);
-    const host = $("#steps");
-    host.innerHTML = `<p class="empty">A levezetés a teljes adatsor megadása után jelenik meg.</p>`;
+    $("#steps").innerHTML = `<p class="empty">A levezetés a teljes adatsor megadása után jelenik meg.</p>`;
     return;
   }
   status.hidden = true;
-  const R = compute(v);
+  const R = compute(v, pr);
   if (R.zeroF) {
     status.textContent = "Az eredő erő nulla: az erőrendszer egy erőpárral egyenértékű, G pont nem létezik.";
     status.hidden = false;
@@ -772,11 +943,34 @@ function update() {
 }
 
 function init() {
-  buildInputs();
+  const saved = load();
+  state.raw = defaultsRaw();
+  if (saved && typeof saved === "object") {
+    if (saved.preset) state.preset = presetById(saved.preset).id;
+    state.manual = !!saved.manual;
+    if (saved.raw) Object.keys(FIELD).forEach(k => { if (typeof saved.raw[k] === "string") state.raw[k] = saved.raw[k]; });
+  }
+  buildPresets();
   buildAnswers();
-  setValues(Object.assign(defaults(), load() || {}));
-  $("#btn-example").addEventListener("click", () => { setValues(Object.assign(defaults(), EXAMPLE)); update(); });
-  $("#btn-reset").addEventListener("click", () => { setValues(defaults()); update(); });
+  buildInputs();
+  $("#manual").addEventListener("change", e => setManual(e.target.checked));
+  $("#btn-example").addEventListener("click", () => {
+    const pr = presetById(state.preset);
+    Object.assign(state.raw, pr.example);
+    state.manual = false;
+    buildInputs();
+    const note = $("#example-note");
+    note.textContent = "Példa: " + pr.exampleNote;
+    note.hidden = false;
+    update();
+  });
+  $("#btn-reset").addEventListener("click", () => {
+    state.raw = defaultsRaw();
+    state.manual = false;
+    $("#example-note").hidden = true;
+    buildInputs();
+    update();
+  });
   update();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
