@@ -130,6 +130,9 @@ figcaption{font-size:13px;color:var(--muted);margin-top:8px}
 #fig .axis line{stroke:var(--muted);stroke-width:1.2}
 #fig .axis polygon{fill:var(--muted)}
 #fig .guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;fill:none}
+#fig .neg-axis{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4;fill:none}
+#fig .gpath{stroke:var(--res);stroke-width:1.8;stroke-dasharray:5 3;fill:none;stroke-linejoin:round}
+#fig .gtick{fill:var(--res)}
 #fig .rod-edge{stroke:var(--rod-edge);stroke-width:8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #fig .rod{stroke:var(--rod);stroke-width:5.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #fig .load line{stroke:var(--accent);stroke-width:2.6}
@@ -588,7 +591,7 @@ function figureEl(v, R) {
   const fig = document.createElement("figure");
   fig.innerHTML = `<div class="fig-box"><svg id="fig" role="img" aria-label="Méretarányos axonometrikus vázlat"></svg></div>
     <div class="legend"><span><i style="background:var(--accent)"></i>adott terhelések</span><span><i style="background:var(--res)"></i>eredő F, M<sub>G</sub>, centrális egyenes</span></div>
-    <figcaption>Méretarányos vázlat a megadott a, b, c értékekkel. Az erő- és nyomatékvektorok hossza külön-külön arányos. Kettős nyíl: nyomatékvektor.</figcaption>`;
+    <figcaption>Méretarányos vázlat a megadott a, b, c értékekkel. Az erő- és nyomatékvektorok hossza külön-külön arányos. Kettős nyíl: nyomatékvektor.${R && !R.zeroF ? ` A G = (${R.rG.map(x => fixed(x)).join("; ")}) m pontig vezető szaggatott vonal a koordinátákat mutatja (O → x<sub>G</sub> → y<sub>G</sub> → z<sub>G</sub>), a negatív féltengelyek pontozva. Az axonometrikus képen a derékszögek torzulnak, ezért az OG szakasz nem látszik merőlegesnek az e egyenesre, és a negatív koordinátájú pontok az origó „elé” vetülhetnek.` : ""}</figcaption>`;
   drawFigure($("svg", fig), v, R);
   return fig;
 }
@@ -679,6 +682,20 @@ function drawFigure(svg, v, R) {
       // r_G guide, central axis, F and M_G at G
       const PG = P(G);
       out.guide.push(`<line class="guide" x1="0" y1="0" x2="${f1(PG[0])}" y2="${f1(PG[1])}"/>`);
+      // negative half-axes (dotted) where G lies on the negative side
+      for (let i = 0; i < 3; i++) {
+        if (G[i] < -1e-6) {
+          const q = [0, 0, 0]; q[i] = G[i] - 0.2 * L;
+          const Q = P(q); track(Q);
+          out.guide.push(`<line class="neg-axis" x1="0" y1="0" x2="${f1(Q[0])}" y2="${f1(Q[1])}"/>`);
+        }
+      }
+      // coordinate path O -> (xG,0,0) -> (xG,yG,0) -> G, so the position can be read off the axes
+      const c1 = [G[0], 0, 0], c2 = [G[0], G[1], 0];
+      const cp = [O, c1, c2, G].map(P);
+      track(...cp);
+      out.guide.push(`<polyline class="gpath" points="${cp.map(q => `${f1(q[0])},${f1(q[1])}`).join(" ")}"/>`);
+      [cp[1], cp[2]].forEach(q => out.dots.push(`<circle class="gtick" cx="${f1(q[0])}" cy="${f1(q[1])}" r="2.4"/>`));
       const ef = scale(R.F, 1 / R.Fn);
       const t = 0.85 * L;
       const e0 = P(plus(G, ef, -t)), e1 = P(plus(G, ef, t * 1.25));
