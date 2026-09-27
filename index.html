@@ -165,7 +165,7 @@ footer p{margin:4px 0;max-width:90ch}
       <h2 id="h-inputs">Adatok</h2>
       <p class="sub">A kiemelt mezők a két ismert lapon eltértek, ezeket biztosan a sajátodról töltsd ki. A többit is ellenőrizd.</p>
       <div id="inputs"></div>
-      <p class="hint">Tizedesvessző és tizedespont is jó (0,7 vagy 0.7). Ha a lapodon F₂ vagy F₃ három koordinátával szerepel, írd be mindhármat. Ha csak egy szám van megadva, azt az ábra szerinti irány komponensébe írd, előjellel (pl. F₂ +y irányú → F₂y), a másik kettő 0. M₂ az ábrán −z irányú, ezért előjel nélkül add meg.</p>
+      <p class="hint">Tizedesvessző és tizedespont is jó (0,7 vagy 0.7). Ha a lapodon F₂ vagy F₃ három koordinátával szerepel, írd be mindhármat. Ha csak egy szám van megadva, azt az ábra szerinti irány komponensébe írd, előjellel (pl. F₂ +y irányú → F₂y), a másik kettő 0. Ugyanígy M₂-nél: az alap lapon M₂ az ábrán lefelé (−z) mutat, ezért a táblázatbeli 2,1 → M₂z = −2,1 (M₂x = M₂y = 0).</p>
       <div class="actions">
         <button type="button" id="btn-example">Példaadatok betöltése</button>
         <button type="button" id="btn-reset">Alapértékek visszaállítása</button>
@@ -193,7 +193,7 @@ footer p{margin:4px 0;max-width:90ch}
   </section>
 
   <footer>
-    <p>Az ábra értelmezése: B = (a; 0; 0), C = (a; b; 0), D = (0; b; 0), A = (a; 0; c), E = (0; b; c). F₁ a B, F₂ az E, F₃ a C pontban hat (mindhárom tetszőleges irányú vektor lehet). M₂ a −z irányba mutat, M₁ szabad vektor.</p>
+    <p>Az ábra értelmezése: B = (a; 0; 0), C = (a; b; 0), D = (0; b; 0), A = (a; 0; c), E = (0; b; c). F₁ a B, F₂ az E, F₃ a C pontban hat (mindhárom tetszőleges irányú vektor lehet). M₁ és M₂ szabad vektorok, mindkettő három koordinátával adható meg (az alap lapon M₂ = (0; 0; −M₂), azaz lefelé mutat).</p>
     <p>Tanulási segédlet: a levezetést érdemes végigkövetni, és a méretarányos ábrát (1. és 5. feladatrész) magadnak elkészíteni.</p>
   </footer>
 </div>
@@ -203,14 +203,15 @@ footer p{margin:4px 0;max-width:90ch}
 "use strict";
 const T = String.raw;
 const $ = (s, r = document) => r.querySelector(s);
-const STORE_KEY = "statika-hf1-v2";
+const STORE_KEY = "statika-hf1-v3";
 
 const GROUPS = [
   { key: "geo", title: "Geometria", unit: "m" },
   { key: "f1", title: "F₁ erő – B pontban", unit: "kN" },
   { key: "f2", title: "F₂ erő – E pontban", unit: "kN" },
   { key: "f3", title: "F₃ erő – C pontban", unit: "kN" },
-  { key: "moment", title: "Erőpárok", unit: "kNm" },
+  { key: "m1", title: "M₁ erőpár", unit: "kNm" },
+  { key: "m2", title: "M₂ erőpár", unit: "kNm" },
 ];
 const FIELDS = [
   { id: "a",   tex: "a",      g: "geo",    def: "0.3", positive: true },
@@ -225,10 +226,12 @@ const FIELDS = [
   { id: "F3x", tex: "F_{3x}", g: "f3",     def: "0" },
   { id: "F3y", tex: "F_{3y}", g: "f3",     def: "0" },
   { id: "F3z", tex: "F_{3z}", g: "f3",     def: "",   own: true },
-  { id: "M1x", tex: "M_{1x}", g: "moment", def: "0.8" },
-  { id: "M1y", tex: "M_{1y}", g: "moment", def: "1.3" },
-  { id: "M1z", tex: "M_{1z}", g: "moment", def: "",   own: true },
-  { id: "M2",  tex: "M_{2}",  g: "moment", def: "2.1" },
+  { id: "M1x", tex: "M_{1x}", g: "m1",     def: "0.8" },
+  { id: "M1y", tex: "M_{1y}", g: "m1",     def: "1.3" },
+  { id: "M1z", tex: "M_{1z}", g: "m1",     def: "",   own: true },
+  { id: "M2x", tex: "M_{2x}", g: "m2",     def: "0" },
+  { id: "M2y", tex: "M_{2y}", g: "m2",     def: "0" },
+  { id: "M2z", tex: "M_{2z}", g: "m2",     def: "-2.1" },
 ];
 const EXAMPLE = { F1z: "0.7", F3z: "2.1", M1z: "0.5" };
 
@@ -345,10 +348,10 @@ function read() {
 
 /* ---------- model ---------- */
 function compute(v) {
-  const { a, b, c, F1x, F1y, F1z, F2x, F2y, F2z, F3x, F3y, F3z, M1x, M1y, M1z, M2 } = v;
+  const { a, b, c, F1x, F1y, F1z, F2x, F2y, F2z, F3x, F3y, F3z, M1x, M1y, M1z, M2x, M2y, M2z } = v;
   const r = { A: [a, 0, c], B: [a, 0, 0], C: [a, b, 0], D: [0, b, 0], E: [0, b, c] };
   const F1 = [F1x, F1y, F1z], F2v = [F2x, F2y, F2z], F3v = [F3x, F3y, F3z];
-  const M1 = [M1x, M1y, M1z], M2v = [0, 0, -M2];
+  const M1 = [M1x, M1y, M1z], M2v = [M2x, M2y, M2z];
   const F = add(F1, F2v, F3v);
   const m1 = cross(r.B, F1), m2 = cross(r.E, F2v), m3 = cross(r.C, F3v);
   const MO = add(m1, m2, m3, M1, M2v);
@@ -462,7 +465,7 @@ function item(it) {
 function renderSteps(v, R) {
   const host = $("#steps");
   host.innerHTML = "";
-  const { a, b, c, F1x, F1y, F1z, F2x, F2y, F2z, F3x, F3y, F3z, M1x, M1y, M1z, M2 } = v;
+  const { a, b, c, F1x, F1y, F1z, F2x, F2y, F2z, F3x, F3y, F3z, M1x, M1y, M1z, M2x, M2y, M2z } = v;
   const r = R.r;
 
   // 1. Geometry & loads (+ figure)
@@ -482,7 +485,7 @@ function renderSteps(v, R) {
       \mathbf F_2 &= (F_{2x};\ F_{2y};\ F_{2z}) &&= ${tri(R.F2v)}${U.kN} && \text{(E-ben)}\\
       \mathbf F_3 &= (F_{3x};\ F_{3y};\ F_{3z}) &&= ${tri(R.F3v)}${U.kN} && \text{(C-ben)}\\
       \mathbf M_1 &= (M_{1x};\ M_{1y};\ M_{1z}) &&= ${tri(R.M1)}${U.kNm} && \text{(erőpár)}\\
-      \mathbf M_2 &= (0;\ 0;\ -M_2) &&= ${tri(R.M2v)}${U.kNm} && \text{(erőpár, }-z)
+      \mathbf M_2 &= (M_{2x};\ M_{2y};\ M_{2z}) &&= ${tri(R.M2v)}${U.kNm} && \text{(erőpár)}
     \end{aligned}` },
     { p: "Az $\\mathbf M_1$ és $\\mathbf M_2$ erőpárok szabad vektorok: a nyomatékuk bármely pontra ugyanaz, ezért a helyük nem számít.", cls: "note" },
   ].forEach(it => s1left.appendChild(item(it)));
@@ -520,12 +523,12 @@ function renderSteps(v, R) {
     { m: T`\mathbf M_O = ${col(R.m1)} + ${col(R.m2)} + ${col(R.m3)} + ${col(R.M1)} + ${col(R.M2v)} = ${col(R.MO)}${U.kNm}` },
     { p: "Komponensenként, zárt alakban:" },
     { m: T`\begin{aligned}
-      M_{Ox} &= b\,F_{2z} - c\,F_{2y} + b\,F_{3z} + M_{1x}\\
-             &= ${mul(b, F2z)} - ${mul(c, F2y)} + ${mul(b, F3z)} + ${p(M1x)} = \mathbf{${fixed(R.MO[0])}}${U.kNm}\\[10pt]
-      M_{Oy} &= -a\,F_{1z} + c\,F_{2x} - a\,F_{3z} + M_{1y}\\
-             &= -${mul(a, F1z)} + ${mul(c, F2x)} - ${mul(a, F3z)} + ${p(M1y)} = \mathbf{${fixed(R.MO[1])}}${U.kNm}\\[10pt]
-      M_{Oz} &= a\,F_{1y} - b\,F_{2x} + a\,F_{3y} - b\,F_{3x} + M_{1z} - M_2\\
-             &= ${mul(a, F1y)} - ${mul(b, F2x)} + ${mul(a, F3y)} - ${mul(b, F3x)} + ${p(M1z)} - ${p(M2)} = \mathbf{${fixed(R.MO[2])}}${U.kNm}
+      M_{Ox} &= b\,F_{2z} - c\,F_{2y} + b\,F_{3z} + M_{1x} + M_{2x}\\
+             &= ${mul(b, F2z)} - ${mul(c, F2y)} + ${mul(b, F3z)} + ${p(M1x)} + ${p(M2x)} = \mathbf{${fixed(R.MO[0])}}${U.kNm}\\[10pt]
+      M_{Oy} &= -a\,F_{1z} + c\,F_{2x} - a\,F_{3z} + M_{1y} + M_{2y}\\
+             &= -${mul(a, F1z)} + ${mul(c, F2x)} - ${mul(a, F3z)} + ${p(M1y)} + ${p(M2y)} = \mathbf{${fixed(R.MO[1])}}${U.kNm}\\[10pt]
+      M_{Oz} &= a\,F_{1y} - b\,F_{2x} + a\,F_{3y} - b\,F_{3x} + M_{1z} + M_{2z}\\
+             &= ${mul(a, F1y)} - ${mul(b, F2x)} + ${mul(a, F3y)} - ${mul(b, F3x)} + ${p(M1z)} + ${p(M2z)} = \mathbf{${fixed(R.MO[2])}}${U.kNm}
     \end{aligned}` },
     { m: T`[\mathbf F,\ \mathbf M_O]_O = \left[\ ${col(R.F)}${U.kN},\ \ ${col(R.MO)}${U.kNm}\ \right]_O` },
   ]));
@@ -662,7 +665,7 @@ function drawFigure(svg, v, R) {
   if (all) {
     const fMax = Math.max(Math.hypot(...R.F1), Math.hypot(...R.F2v), Math.hypot(...R.F3v), R.Fn, 1e-9);
     const kF = 0.6 * L / fMax;
-    const mMax = Math.max(Math.hypot(...R.M1), Math.abs(v.M2), G ? Math.hypot(...R.MG) : 0, 1e-9);
+    const mMax = Math.max(Math.hypot(...R.M1), Math.hypot(...R.M2v), G ? Math.hypot(...R.MG) : 0, 1e-9);
     const kM = 0.6 * L / mMax;
     const plus = (q, u, k) => [q[0] + u[0] * k, q[1] + u[1] * k, q[2] + u[2] * k];
 
