@@ -19,3 +19,16 @@ Az A–D változatot korábbi, kidolgozott feladatlapok eredményeivel ellenőri
 | E | A(a;0;0), B(a;0;c), C(a;b;c), D(0;b;c), E(0;b;0) | A | D, −y | C, +x | −z |
 
 M₁ és M₂ szabad vektorok. Ha egy lap ábrája egyik változattal sem egyezik, az F₂, F₃ és M₂ komponensenként is megadható.
+
+## 2. házi feladat
+
+A [`hf2/`](hf2/) oldal a 2. házi feladathoz készült: síkbeli, két rúdból álló tartó reakcióerői egy csuklós és egy 45°-os sima támasz esetén. Kiszámolja a Moodle-be beírandó A₁ₓ, A₁ᵧ, B₁ₓ, B₁ᵧ (megadott M₀) és A₂ₓ, A₂ᵧ, B₂ₓ, B₂ᵧ (M₀ = 0) értékeket, megmutatja a szabadtest-ábrát, az egyensúlyi egyenleteket, valamint a három erő egyensúlyán alapuló szerkesztést méretarányos szerkezeti ábrával és erőábrával.
+
+| | Csukló | Sima támasz | Megoszló terhelés |
+|---|---|---|---|
+| 1 | B, a vízszintes rúdon | A, a bal végi függőleges rúd alján | B-től jobbra csökken |
+| 2 | B, a jobb végen | A, az F₁ alatti függőleges rúd alján | B felé nő |
+| 3 | A, középen | B, a jobb végen | A felé nő |
+| 4 | A, a falon (bal vég) | B, a jobb végen | jobbra nő |
+
+Az elrendezéseket 2026/27-es lapokról vettük át; két független számítás egyezik, javított lappal még nem ellenőriztük.
