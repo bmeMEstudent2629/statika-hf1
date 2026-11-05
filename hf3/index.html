@@ -383,7 +383,7 @@ const PRESETS = [
   },
   {
     id: "2", title: "2. változat",
-    desc: "Az 1. változat függőleges tükörképe: A csukló a bal alsó sarokban, B csukló a jobb felső sarokban (felfüggesztve). A C csukló a felső övön. F₁ a felső övön lefelé, F₃ balra és F₂ jobbra az alsó övön.",
+    desc: "A csukló a bal alsó sarokban, B csukló a jobb felső sarokban (felfüggesztve), C a felső övön. Az 5-ös rúd az alsó övről felfelé, C-be fut. F₁ a felső övön lefelé, F₃ balra és F₂ jobbra az alsó övön.",
     years: "Minta: 1 db 2026/27-es lap",
     pts: { A: ["0", "0"], D: ["a", "0"], E: ["2*a", "0"], G: ["2*a+b", "0"], H: ["a", "c"], C: ["2*a", "c"], B: ["2*a+b", "c"] },
     bars: [["A", "H"], ["A", "D"], ["D", "H"], ["D", "E"], ["D", "C"], ["H", "C"], ["E", "C"], ["C", "B"], ["C", "G"], ["G", "B"]],
@@ -396,6 +396,22 @@ const PRESETS = [
     origin: "Az origót az A pontba tesszük (A a bal alsó sarok).",
     example: { a: "1.2", b: "1.8", c: "1.7", F1: "18", F2: "32", F3: "17" },
     exampleNote: "2026/27-es lap adatai. Eredmény: A = (72.3725; 48.2222), B = (−87.3725; −30.2222) kN, N₁ = −59.0258 kN.",
+  },
+  {
+    id: "3", title: "3. változat",
+    desc: "Mint a 2. változat, de az 5-ös rúd az F₁ alatti felső csomópontból lefelé, az alsó övre fut. F₁ lefelé, F₃ jobbra és F₂ balra mutat.",
+    years: "Minta: 1 db 2026/27-es lap",
+    pts: { A: ["0", "0"], D: ["a", "0"], E: ["2*a", "0"], G: ["2*a+b", "0"], H: ["a", "c"], C: ["2*a", "c"], B: ["2*a+b", "c"] },
+    bars: [["A", "H"], ["A", "D"], ["D", "H"], ["D", "E"], ["H", "E"], ["H", "C"], ["E", "C"], ["C", "B"], ["C", "G"], ["G", "B"]],
+    sup: { A: "down", B: "up" },
+    loads: { F1: { at: "H", dir: [0, -1], side: [0, 1] }, F2: { at: "G", dir: [-1, 0], side: [1, 0], lab: -1 }, F3: { at: "E", dir: [1, 0], side: [1, 0], lab: -1 } },
+    nodeLab: { A: [-0.9, 1], D: [0, -1], E: [0.9, 1], G: [0.9, 1], H: [-0.9, 1], C: [0, 1], B: [0.9, -1] },
+    order: ["A", "D", "H", "E", "B", "G", "C"],
+    leftPart: ["A", "D", "E", "H"], rightPart: ["G", "B"],
+    piece: ["A", "D", "H"],
+    origin: "Az origót az A pontba tesszük (A a bal alsó sarok).",
+    example: { a: "1.6", b: "2.5", c: "1.5", F1: "24", F2: "50", F3: "13" },
+    exampleNote: "2026/27-es lap adatai. Eredmény: A = (−51.4; −6), B = (88.4; 30) kN, N₁ = 8.7727 kN.",
   },
 ];
 PRESETS.forEach(pr => {
