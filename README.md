@@ -41,5 +41,6 @@ A [`hf3/`](hf3/) oldal a 3. házi feladathoz készült: két csuklóval (A, B) m
 |---|---|---|---|---|---|
 | 1 | bal felső sarok, falon | jobb alsó sarok | alsó öv | alsó öv, lefelé | felső öv, balra / jobbra |
 | 2 | bal alsó sarok | jobb felső sarok, felfüggesztve | felső öv | felső öv, lefelé | alsó öv, balra / jobbra |
+| 3 | bal alsó sarok | jobb felső sarok, felfüggesztve | felső öv | felső öv, lefelé (az 5-ös rúd innen fut le az alsó övre) | alsó öv, jobbra / balra |
 
-A csomópontok közül a lapon csak A, B és C van megnevezve; a kalkulátor a többit D, E, G, H betűvel jelöli. Az elrendezéseket 2026/27-es lapokról vettük át (1. változat: 4 lap, 2. változat: 1 lap); két független számítás egyezik, javított lappal még nem ellenőriztük.
+A csomópontok közül a lapon csak A, B és C van megnevezve; a kalkulátor a többit D, E, G, H betűvel jelöli. Az elrendezéseket 2026/27-es lapokról vettük át (1. változat: 4 lap, 2. és 3. változat: 1–1 lap); két független számítás egyezik, javított lappal még nem ellenőriztük.
