@@ -367,7 +367,7 @@ const linAbs = (u, v) => linEval(u, v) < 0 ? linMul(u, -1) : u;
 const PRESETS = [
   {
     id: "1", title: "1. változat",
-    desc: "A csukló a bal felső sarokban, falon; B csukló a jobb alsó sarokban. A C csukló az alsó övön. F₁ az alsó övön lefelé, F₃ balra és F₂ jobbra a felső övön.",
+    desc: "A csukló a bal felső sarokban, falon; B csukló a jobb alsó sarokban, C az alsó övön. Az 5-ös rúd az F₁ feletti alsó csomópontból felfelé, a felső övre fut. F₁ lefelé, F₃ balra és F₂ jobbra a felső övön.",
     years: "Minta: 4 db 2026/27-es lap",
     pts: { A: ["0", "c"], D: ["a", "c"], E: ["2*a", "c"], G: ["2*a+b", "c"], H: ["a", "0"], C: ["2*a", "0"], B: ["2*a+b", "0"] },
     bars: [["A", "H"], ["A", "D"], ["D", "H"], ["D", "E"], ["H", "E"], ["H", "C"], ["C", "E"], ["C", "B"], ["C", "G"], ["G", "B"]],
@@ -412,6 +412,22 @@ const PRESETS = [
     origin: "Az origót az A pontba tesszük (A a bal alsó sarok).",
     example: { a: "1.6", b: "2.5", c: "1.5", F1: "24", F2: "50", F3: "13" },
     exampleNote: "2026/27-es lap adatai. Eredmény: A = (−51.4; −6), B = (88.4; 30) kN, N₁ = 8.7727 kN.",
+  },
+  {
+    id: "4", title: "4. változat",
+    desc: "Mint az 1. változat, de az 5-ös rúd a felső övről lefelé, C-be fut. F₁ lefelé, F₃ jobbra és F₂ balra mutat.",
+    years: "Minta: 1 db 2026/27-es lap",
+    pts: { A: ["0", "c"], D: ["a", "c"], E: ["2*a", "c"], G: ["2*a+b", "c"], H: ["a", "0"], C: ["2*a", "0"], B: ["2*a+b", "0"] },
+    bars: [["A", "H"], ["A", "D"], ["D", "H"], ["D", "E"], ["D", "C"], ["H", "C"], ["C", "E"], ["C", "B"], ["C", "G"], ["G", "B"]],
+    sup: { A: "left", B: "down" },
+    loads: { F1: { at: "H", dir: [0, -1], side: [0, -1] }, F2: { at: "G", dir: [-1, 0], side: [1, 0], lab: 1 }, F3: { at: "E", dir: [1, 0], side: [1, 0], lab: 1 } },
+    nodeLab: { A: [0.9, 1], D: [0, 1], E: [0.9, -1], G: [0.9, -1], H: [-1, -1], C: [-0.8, -1], B: [0.9, 1] },
+    order: ["A", "H", "D", "E", "B", "G", "C"],
+    leftPart: ["A", "D", "E", "H"], rightPart: ["G", "B"],
+    piece: ["A", "D", "H"],
+    origin: "Az origót az A-n átmenő függőleges és az alsó öv metszéspontjába tesszük (A a bal felső sarok).",
+    example: { a: "1", b: "2", c: "1.1", F1: "20", F2: "45", F3: "25" },
+    exampleNote: "2026/27-es lap adatai. Eredmény: A = (−88.1818; 44.75), B = (108.1818; −24.75) kN, N₁ = 60.4779 kN.",
   },
 ];
 PRESETS.forEach(pr => {
