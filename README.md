@@ -45,3 +45,16 @@ A [`hf3/`](hf3/) oldal a 3. házi feladathoz készült: két csuklóval (A, B) m
 | 4 | bal felső sarok, falon | jobb alsó sarok | alsó öv | alsó öv, lefelé (az 5-ös rúd a felső övről fut le C-be) | felső öv, jobbra / balra |
 
 A csomópontok közül a lapon csak A, B és C van megnevezve; a kalkulátor a többit D, E, G, H betűvel jelöli. Az elrendezéseket 2026/27-es lapokról vettük át (1. változat: 4 lap, 2–4. változat: 1–1 lap); két független számítás egyezik, javított lappal még nem ellenőriztük.
+
+## 4. házi feladat
+
+A [`hf4/`](hf4/) oldal a 4. házi feladathoz készült: befogott, C-ben belső csuklós rúdszerkezet (egy L-alakú és egy egyenes rúd) p megoszló és F koncentrált terheléssel. Kiszámolja a Moodle-be beírandó Aₓ, Aᵧ, M_A, Bₓ, Bᵧ reakciókat, a vízszintes rész |V| és |M_h| szélsőértékét a helyével (x_V, x_Mh), valamint a lokális szélsőértéket (x*, M_h(x*)). Lépésenként megmutatja a szétbontást a C csuklóban vektoros jelöléssel, az igénybevételi függvényeket szakaszonként a vízszintes részre és a függőleges rúdra (választható origóval), a jellegzetes értékeket és a parabolaívek érintőit, és megrajzolja az N, V, M_h ábrákat.
+
+Előjelkonvenció: N húzásra pozitív, V a metszettől balra lévő erők függőleges összege, M_h a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív), így M_h′ = −V.
+
+| | A | B | C | Függőleges rúd | p | F |
+|---|---|---|---|---|---|---|
+| 1 | befogás (bal fal) | görgő függőleges falon, a függőleges rúd tetején | A-tól a-ra | a jobb végen, k magas | C-től a jobb végig, lefelé | C-től b-re, felfelé |
+| 2 | befogás (bal fal) | görgő a talajon, a jobb végen | A-tól a-ra | C-ben, az AC részhez mereven kötve, k magas | A-tól a+b hosszon, lefelé | a függőleges rúd tetején, jobbra |
+
+A 2. változatot egy kijavított 2023/24-es lap eredménytáblázatával ellenőriztük, és mindkét változat egyezik egy független számítással.
