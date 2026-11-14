@@ -1,0 +1,1713 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statika HF4 kalkulátor</title>
+<meta name="description" content="BME Statika 4. házi feladat: csuklós rúdszerkezet reakciói, igénybevételi függvényei és ábrái – lépésről lépésre, a saját adataiddal.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Cpath d='M10 22 H54 M10 22 V44 M14 40 Q32 62 50 40' stroke='white' stroke-width='4.5' stroke-linejoin='round' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+:root{
+  --bg:#f4f3ee; --surface:#ffffff; --surface-2:#f9f8f4; --ink:#1c1c1a; --muted:#67665f;
+  --line:#e3e1d9; --line-strong:#cbc8bd;
+  --accent:#1d4ed8; --accent-soft:#e8eefd; --accent-ink:#1e3a8a;
+  --res:#c2410c; --res-soft:#fdeee5;
+  --rx:#7c3aed; --rx-soft:#f1eafe;
+  --nf:#0f766e; --nf-soft:#e3f4f1;
+  --ok:#15803d; --bad:#b91c1c; --bad-soft:#fdeceb;
+  --rod:#b4b7bd; --rod-edge:#6b7079;
+  --radius:12px;
+  --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151514; --surface:#1e1e1c; --surface-2:#242422; --ink:#ebeae4; --muted:#a3a299;
+    --line:#32322e; --line-strong:#4a4943;
+    --accent:#86a8ff; --accent-soft:#1c2747; --accent-ink:#c9d7ff;
+    --res:#fb923c; --res-soft:#3a2415;
+    --rx:#c4a7ff; --rx-soft:#2a1f45;
+    --nf:#2dd4bf; --nf-soft:#12302c;
+    --ok:#4ade80; --bad:#f87171; --bad-soft:#3a1a1a;
+    --rod:#8c9098; --rod-edge:#c3c7ce;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151514; --surface:#1e1e1c; --surface-2:#242422; --ink:#ebeae4; --muted:#a3a299;
+  --line:#32322e; --line-strong:#4a4943;
+  --accent:#86a8ff; --accent-soft:#1c2747; --accent-ink:#c9d7ff;
+  --res:#fb923c; --res-soft:#3a2415;
+  --rx:#c4a7ff; --rx-soft:#2a1f45;
+  --nf:#2dd4bf; --nf-soft:#12302c;
+  --ok:#4ade80; --bad:#f87171; --bad-soft:#3a1a1a;
+  --rod:#8c9098; --rod-edge:#c3c7ce;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55}
+a{color:var(--accent)}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+header{margin-bottom:24px}
+.toplink{font-size:14px;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:6px 18px}
+.toplink a{text-decoration:none}
+.toplink a:hover{text-decoration:underline}
+.eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0 0 6px}
+h1{font-size:clamp(24px,4vw,32px);line-height:1.2;margin:0 0 10px;font-weight:600;letter-spacing:-.01em}
+header p.lead{margin:0;color:var(--muted);max-width:70ch}
+h2{font-size:18px;margin:0 0 4px;font-weight:600}
+.sub{color:var(--muted);font-size:14px;margin:0 0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.grid-top{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin-bottom:20px}
+@media (min-width:920px){.grid-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+
+/* inputs */
+.group{margin-top:18px}
+.group:first-of-type{margin-top:4px}
+.group-title{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 8px}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+.field label{display:flex;align-items:center;gap:6px;font-size:15px;margin-bottom:4px;min-height:24px}
+.field .u{font-size:12px;color:var(--muted)}
+.field input{width:100%;font-family:var(--mono);font-size:16px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);outline:none;transition:border-color .12s, box-shadow .12s}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.field.bad input{border-color:var(--bad);background:var(--bad-soft)}
+.hint{font-size:13px;color:var(--muted);margin:14px 0 0}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+button{font-family:var(--sans);font-size:14px;cursor:pointer;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:7px 12px;transition:background .12s,border-color .12s}
+button:hover{background:var(--surface-2);border-color:var(--muted)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toggle{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin-top:16px;cursor:pointer}
+.toggle input{margin-top:4px;accent-color:var(--accent)}
+.overrides{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:10px}
+.overrides[hidden]{display:none}
+.overrides label{display:block;font-size:14px;margin-bottom:4px}
+.overrides select{width:100%;font-family:var(--sans);font-size:14px;padding:7px 8px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink)}
+.info{font-size:13px;color:var(--ok);margin:10px 0 0}
+.info[hidden]{display:none}
+
+/* answers */
+.status{font-size:14px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent-ink);margin:0 0 14px}
+.status.warn{background:var(--bad-soft);color:var(--bad)}
+.status[hidden]{display:none}
+.ans-block{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.ans-block:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.ans-head{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:4px 0 4px}
+.ans-grid{display:grid;grid-template-columns:minmax(0,1fr);column-gap:22px}
+@media (min-width:520px){.ans-grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (min-width:920px) and (max-width:1060px){.ans-grid.two{grid-template-columns:minmax(0,1fr)}}
+.ans-row{display:grid;grid-template-columns:62px minmax(0,1fr) 34px 38px;align-items:center;gap:8px;padding:4px 0}
+.ans-label{font-size:17px;line-height:1.15}
+.ans-tag{display:block;font-family:var(--sans);font-size:11px;letter-spacing:.02em;color:var(--muted);margin-top:1px}
+.ans-tag.t{color:var(--accent)}
+.ans-tag.c{color:var(--res)}
+.ans-val{font-family:var(--mono);font-size:19px;font-weight:500;padding:5px 10px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-soft);color:var(--accent-ink);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ans-unit{color:var(--muted);font-size:13px}
+.copy{padding:6px;width:36px;height:36px;display:grid;place-items:center}
+.copy svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.copy.done{border-color:var(--ok);color:var(--ok)}
+
+/* tables */
+.tabwrap{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.tabwrap + .tabwrap{margin-top:12px}
+.restab{width:100%;border-collapse:collapse;min-width:640px}
+.restab.narrow{min-width:360px}
+.restab th,.restab td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 8px;text-align:center}
+.restab th{font-weight:400;font-size:14px;color:var(--muted)}
+.restab td{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
+.restab tr:last-child td{border-bottom:0}
+.restab th:last-child,.restab td:last-child{border-right:0}
+.restab td.lbl{font-family:var(--sans);color:var(--muted);text-align:right;font-size:14px}
+.restab td.tg{font-family:var(--sans);font-size:13px;color:var(--muted)}
+.cmp{min-width:420px}
+
+/* derivation */
+.steps{counter-reset:step}
+.step{padding:18px 0;border-top:1px solid var(--line)}
+.step:first-child{border-top:0;padding-top:4px}
+.step h3{font-size:16px;margin:0 0 8px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.step h3::before{counter-increment:step;content:counter(step);font-family:var(--mono);font-size:13px;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:1px 7px}
+.step h4{font-size:15px;margin:16px 0 6px;font-weight:600}
+.step p{margin:6px 0;max-width:80ch}
+.math{position:relative;overflow-x:auto;overflow-y:hidden;padding:4px 0;margin:4px 0}
+.math .katex-display{margin:6px 0;text-align:left}
+.math .katex-display > .katex{text-align:left}
+.tex-fallback{font-family:var(--mono);font-size:13px;white-space:pre-wrap;color:var(--muted)}
+.step-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:920px){.step-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.note{font-size:14px;color:var(--muted)}
+.warnp{font-size:14px;color:var(--bad)}
+.nodes{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:12px}
+.node-card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface);min-width:0}
+.node-card h4{margin:0 0 6px;font-size:15px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.node-card h4 .badge{font-size:12px}
+.node-card .nk{font-weight:400;font-size:13px;color:var(--muted)}
+.node-body{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:start}
+@media (min-width:560px){.node-body{grid-template-columns:230px minmax(0,1fr)}}
+.node-fig svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.node-eq{min-width:0}
+.node-eq .math{font-size:14px}
+
+/* figures */
+figure{margin:0}
+.fig-box{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:8px}
+.fig-box{overflow-x:auto}
+.fig-box svg{width:100%;height:auto;display:block;max-height:460px}
+.fig-box svg.wide{min-width:600px;max-width:920px;margin:0 auto}
+.scene rect.pill{fill:var(--surface-2);stroke:var(--line-strong);stroke-width:1}
+.scene text.t-bar.plain{stroke:none}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 7px)!important}
+.scene .rod-edge{stroke:var(--rod-edge);stroke-width:6;fill:none;stroke-linecap:round}
+.scene .rod{stroke:var(--rod);stroke-width:3.4;fill:none;stroke-linecap:round}
+.scene .rod-faint{stroke:var(--line-strong);stroke-width:4;fill:none;stroke-linecap:round}
+.scene .rod-t{stroke:var(--accent);stroke-width:4;fill:none;stroke-linecap:round}
+.scene .rod-c{stroke:var(--res);stroke-width:4;fill:none;stroke-linecap:round}
+.scene .rod-0{stroke:var(--muted);stroke-width:2;stroke-dasharray:5 4;fill:none}
+.scene .sup{stroke:var(--ink);stroke-width:1.6;fill:var(--surface);stroke-linejoin:round}
+.scene .hatch{stroke:var(--ink);stroke-width:1}
+.scene .thin{stroke:var(--muted);stroke-width:1;fill:none}
+.scene .hinge{fill:var(--surface);stroke:var(--ink);stroke-width:1.6}
+.scene .load line{stroke:var(--accent);stroke-width:2.4;fill:none}
+.scene .load polygon{fill:var(--accent)}
+.scene .reac line{stroke:var(--rx);stroke-width:2.4}
+.scene .reac polygon{fill:var(--rx)}
+.scene .res line{stroke:var(--res);stroke-width:2.4}
+.scene .res polygon{fill:var(--res)}
+.scene .nfa line{stroke:var(--nf);stroke-width:2.2}
+.scene .nfa polygon{fill:var(--nf)}
+.scene .dim line{stroke:var(--muted);stroke-width:1}
+.scene .dim polygon{fill:var(--muted)}
+.scene .cl{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:6 4;fill:none}
+.scene .cut{stroke:var(--res);stroke-width:1.6;stroke-dasharray:8 5;fill:none}
+.scene .dot{fill:var(--res)}
+.scene .sdot{fill:var(--ink)}
+.scene .scl line{stroke:var(--ink);stroke-width:1.4}
+.scene text{font-family:"Times New Roman",Times,serif;font-style:italic;font-size:17px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+.scene text.t-load{fill:var(--accent)}
+.scene text.t-res{fill:var(--res)}
+.scene text.t-rx{fill:var(--rx)}
+.scene text.t-nf{fill:var(--nf)}
+.scene text.t-dim{fill:var(--muted);font-size:15px}
+.scene text.t-axis{fill:var(--muted);font-size:15px}
+.scene text.t-scl{font-family:var(--sans);font-style:normal;font-size:12px;fill:var(--muted)}
+.scene text.t-bar{font-family:var(--sans);font-style:normal;font-size:13px;fill:var(--ink);paint-order:stroke;stroke:var(--surface-2);stroke-width:4px;stroke-linejoin:round}
+.scene text.t-bar.t{fill:var(--accent)}
+.scene text.t-bar.c{fill:var(--res)}
+.scene text.t-bar.z{fill:var(--muted)}
+.scene text.halo{paint-order:stroke;stroke:var(--surface-2);stroke-width:4px;stroke-linejoin:round}
+.scene tspan.s{font-size:12px}
+.scene tspan.v{font-family:var(--sans);font-style:normal;font-size:12px}
+.empty{color:var(--muted);font-size:14px;padding:24px;text-align:center}
+footer{margin-top:24px;font-size:13px;color:var(--muted)}
+footer p{margin:4px 0;max-width:90ch}
+
+/* layout presets */
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+@media (max-width:560px){.presets{grid-template-columns:minmax(0,1fr);gap:10px}}
+.preset{position:relative;display:flex;flex-direction:column;gap:6px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px 12px;cursor:pointer;background:var(--surface);transition:border-color .12s, box-shadow .12s}
+.preset:hover{border-color:var(--line-strong)}
+.preset.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.preset input{position:absolute;opacity:0;pointer-events:none}
+.preset:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.preset .thumb{width:100%;height:auto;aspect-ratio:16/9;display:block;background:var(--surface-2);border-radius:8px}
+.thumb text{font-size:24px}
+.thumb tspan.s{font-size:16px}
+.thumb text.t-bar{font-size:17px}
+.thumb text.t-axis{font-size:20px}
+.thumb .rod-edge{stroke-width:7.5}
+.thumb .rod{stroke-width:4.4}
+.thumb .load line{stroke-width:3.2}
+.thumb .hatch{stroke-width:1.4}
+.thumb .sup{stroke-width:2}
+.preset-head{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px}
+.badge{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent-ink);border-radius:6px;padding:1px 7px}
+.preset.selected .badge{background:var(--accent);color:var(--surface)}
+.preset-desc{font-size:13px;color:var(--muted);line-height:1.45;margin:0}
+.preset-years{font-size:12px;color:var(--muted);margin:0}
+
+/* HF4 additions */
+.ans-row{grid-template-columns:78px minmax(0,1fr) 40px 38px}
+.ans-unit{white-space:nowrap}
+.ans-fixed{font-family:var(--mono);font-size:19px;padding:5px 10px;color:var(--muted)}
+.seg{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px;background:var(--surface)}
+.seg h4{margin:0 0 4px;font-size:15px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.seg h4 .nk{font-weight:400;font-size:13px;color:var(--muted)}
+.seg .math{font-size:15px}
+.choice{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.choice label{display:flex;align-items:center;gap:6px;font-size:14px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;cursor:pointer;background:var(--surface)}
+.choice label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+.choice input{accent-color:var(--accent);margin:0}
+.ctl-title{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:18px 0 0}
+.restab td.iv{white-space:nowrap}
+.restab td.fix{color:var(--muted)}
+.restab th.sep,.restab td.sep{border-left:3px double var(--line-strong)}
+.dg-box{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:8px;overflow-x:auto}
+.dg-box svg{width:100%;height:auto;display:block;min-width:560px;max-width:980px;margin:0 auto}
+.dg-box.rod svg{min-width:300px;max-width:520px}
+.dg .ax{stroke:var(--ink);stroke-width:1.3}
+.dg .guide{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:4 4}
+.dg .pos{fill:var(--accent-soft);stroke:none}
+.dg .neg{fill:var(--res-soft);stroke:none}
+.dg .crv{stroke:var(--ink);stroke-width:2;fill:none;stroke-linejoin:round}
+.dg .tan{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:5 4;fill:none}
+.dg .star{fill:var(--res)}
+.dg .starline{stroke:var(--res);stroke-width:1.2;stroke-dasharray:3 3}
+.dg text{font-family:var(--sans);font-size:12px;fill:var(--ink);dominant-baseline:middle;text-anchor:middle}
+.dg text.v{paint-order:stroke;stroke:var(--surface-2);stroke-width:4px;stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.dg text.pt{font-family:"Times New Roman",Times,serif;font-style:italic;font-size:15px;fill:var(--muted)}
+.dg text.ttl{font-size:13px;font-weight:600;text-anchor:start}
+.dg text.sg{font-size:13px;fill:var(--muted)}
+.dg text.st{fill:var(--res)}
+.scene .corner{fill:var(--ink)}
+.scene .pbox{fill:none;stroke:var(--muted);stroke-width:1}
+.scene .phatch{stroke:var(--line-strong);stroke-width:1}
+.scene .roller{fill:var(--surface);stroke:var(--ink);stroke-width:1.6}
+.scene .marc{fill:none;stroke:var(--rx);stroke-width:2.2}
+.scene .pres line{stroke:var(--accent);stroke-width:2;stroke-dasharray:5 3}
+.scene .pres polygon{fill:var(--accent)}
+.scene .axis line{stroke:var(--muted);stroke-width:1.3}
+.scene .axis polygon{fill:var(--muted)}
+.scene .axis path{fill:none;stroke:var(--muted);stroke-width:1.3}
+.scene text.t-pt{fill:var(--muted)}
+.scene text.t-our{fill:var(--muted);font-size:15px}
+.thumb text.t-our{font-size:21px}
+.scene .origin{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}
+.scene text.t-o{font-family:var(--sans);font-style:normal;font-size:11px}
+.ans-row{grid-template-columns:118px minmax(0,1fr) 40px 38px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="toplink"><a href="../">← 1. házi feladat: erőrendszer redukálása</a><a href="../hf2/">← 2. házi feladat: síkbeli tartó reakcióerői</a><a href="../hf3/">← 3. házi feladat: rácsos tartó rúderői</a></p>
+    <p class="eyebrow">BME GPK · Statika · 4. házi feladat</p>
+    <h1>Rúdszerkezet igénybevételei – kalkulátor</h1>
+    <p class="lead">Válaszd ki, melyik ábra van a lapodon, majd írd be az „Adatok” táblázatot. Az eredmények gépelés közben frissülnek. Alattuk a teljes levezetés látható a te számaiddal: reakciók a C csuklónál szétbontva, igénybevételi függvények szakaszonként, jellegzetes értékek, érintők, szélsőértékek és igénybevételi ábrák.</p>
+  </header>
+
+  <section class="card" aria-labelledby="h-layout" style="margin-bottom:20px">
+    <h2 id="h-layout">Az ábrád elrendezése</h2>
+    <p class="sub">A támaszok, a terhelések és a függőleges rúd helye lapról lapra változhat. Válaszd azt, amelyik pontosan olyan, mint a lapodon lévő ábra.</p>
+    <div class="presets" id="presets" role="radiogroup" aria-label="Elrendezés"></div>
+  </section>
+
+  <div class="grid-top">
+    <section class="card" aria-labelledby="h-inputs">
+      <h2 id="h-inputs">Adatok</h2>
+      <p class="sub">Írd be a saját lapod „Adatok” táblázatát. Az előre kitöltött számok csak bemutató értékek, ezeket írd felül.</p>
+      <div id="inputs"></div>
+      <p class="hint">Tizedesvessző és tizedespont is jó (0,9 vagy 0.9). Az erők irányát és helyét a kiválasztott elrendezés adja, ide csak a nagyságukat írd.</p>
+      <p class="ctl-title">A függőleges rúd koordinátájának origója</p>
+      <div class="choice" id="rod-origin" role="radiogroup" aria-label="A függőleges rúd origója"></div>
+      <div class="actions">
+        <button type="button" id="btn-example">Példa betöltése</button>
+        <button type="button" id="btn-reset">Alapértékek visszaállítása</button>
+      </div>
+      <p class="info" id="example-note" hidden></p>
+    </section>
+
+    <section class="card" aria-labelledby="h-results">
+      <h2 id="h-results">Eredmények</h2>
+      <p class="sub">A lap táblázatába és a Moodle-be ezek kerülnek (legfeljebb 4 tizedesjegy, a felesleges nullák nélkül; ha a Moodle nem fogadja el a tizedesvesszőt, írd ponttal). Reakciók: +x jobbra, +y felfelé, a nyomaték az óramutató járásával ellentétesen pozitív. A V és M<sub>h</sub> értékek a vízszintes rúdra vonatkoznak, előjelük a lent leírt konvenció szerinti.</p>
+      <p class="status" id="status" hidden></p>
+      <div id="answers"></div>
+    </section>
+  </div>
+
+  <section class="card" aria-labelledby="h-table" style="margin-bottom:20px">
+    <h2 id="h-table">Eredménytáblázat</h2>
+    <p class="sub">Ugyanazok a táblázatok, mint a lap alján.</p>
+    <div id="restable"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-steps">
+    <h2 id="h-steps">Levezetés</h2>
+    <p class="sub">Minden lépés a fent megadott számokkal. A számolás teljes pontossággal fut, a kiírt értékek legfeljebb 4 tizedesjegyre kerekítve, a felesleges nullák nélkül jelennek meg. A vektorokat aláhúzás jelöli.</p>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <footer>
+    <p id="footer-geo"></p>
+    <p>Az előjelkonvenció egy kijavított 2023/24-es lap levezetéséből származik: N húzásra pozitív, V a metszettől balra lévő erők függőleges összege (felfelé pozitív), M<sub>h</sub> a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív), így M<sub>h</sub>′ = −V. A 2. változatot ennek a lapnak az eredménytáblázatával ellenőriztük, az 1. változatot két független számítással. Tanulási segédlet: a levezetést érdemes végigkövetni, az ábrákat pedig magadnak megrajzolni.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+const T = String.raw;
+const $ = (s, r = document) => r.querySelector(s);
+const STORE_KEY = "statika-hf4-v1";
+
+/* ---------- numbers: decimal comma, at most 4 decimals, no trailing zeros ---------- */
+function fmtRaw(x, d = 4) {
+  if (!isFinite(x)) return "?";
+  const f = Math.pow(10, d);
+  let r = Math.round(x * f) / f;
+  if (Math.abs(r) < 0.5 / f) r = 0;
+  let s = r.toFixed(d).replace(/\.?0+$/, "");
+  if (s === "-0") s = "0";
+  return s;
+}
+const num = (x, d = 4) => fmtRaw(x, d).replace(".", ",").replace(/^-/, "−");
+const tn = (x, d = 4) => fmtRaw(x, d).replace(".", "{,}");
+const tp = (x, d = 4) => { const s = tn(x, d); return s.startsWith("-") ? `(${s})` : s; };
+const nz = x => Math.abs(x) > 1e-10;
+// Hungarian article and suffix for point names (A and E are read as vowels)
+const art = n => /^[AEIOUÁÉÍÓÖŐÚÜŰ]/.test(n) ? "az" : "a";
+const Art = n => art(n) === "az" ? "Az" : "A";
+const tol_ = n => /^[AOUÁÓÚ]/.test(n) ? "tól" : "től";
+const U = { m: T`\ \text{m}`, kN: T`\ \text{kN}`, kNm: T`\ \text{kNm}`, kNpm: T`\ \text{kN/m}` };
+
+/* ---------- linear expressions in a, b, c, k (n = constant) ---------- */
+const VARS = ["a", "b", "c", "k"];
+const L0 = (o = {}) => ({ a: o.a || 0, b: o.b || 0, c: o.c || 0, k: o.k || 0, n: o.n || 0 });
+const linAdd = (u, w, sg = 1) => L0({ a: u.a + sg * w.a, b: u.b + sg * w.b, c: u.c + sg * w.c, k: u.k + sg * w.k, n: u.n + sg * w.n });
+const linSub = (u, w) => linAdd(u, w, -1);
+const linMul = (u, t) => L0({ a: u.a * t, b: u.b * t, c: u.c * t, k: u.k * t, n: u.n * t });
+const linEval = (u, v) => u.a * v.a + u.b * v.b + u.c * v.c + u.k * v.k + u.n;
+function lin(str) {
+  const s = String(str).replace(/\s+/g, "");
+  let i = 0;
+  const isConst = u => !u.a && !u.b && !u.c && !u.k;
+  function expr() { let v = term(); while (s[i] === "+" || s[i] === "-") { const op = s[i++]; v = linAdd(v, term(), op === "+" ? 1 : -1); } return v; }
+  function term() {
+    let v = unary();
+    while (s[i] === "*" || s[i] === "/") { const op = s[i++], w = unary(); if (op === "*") v = isConst(v) ? linMul(w, v.n) : linMul(v, w.n); else v = linMul(v, 1 / w.n); }
+    return v;
+  }
+  function unary() { if (s[i] === "-") { i++; return linMul(unary(), -1); } if (s[i] === "+") { i++; return unary(); } return atom(); }
+  function atom() {
+    const ch = s[i];
+    if (ch === "(") { i++; const v = expr(); i++; return v; }
+    if (VARS.includes(ch)) { i++; const o = L0(); o[ch] = 1; return o; }
+    const m = /^\d+(\.\d+)?/.exec(s.slice(i));
+    if (!m) throw new Error("bad expression: " + str);
+    i += m[0].length;
+    return L0({ n: parseFloat(m[0]) });
+  }
+  return expr();
+}
+function frac(x) {
+  for (const d of [1, 2, 3, 4, 6]) { const n = Math.round(x * d); if (n !== 0 && Math.abs(n / d - x) < 1e-9) return [n, d]; }
+  return null;
+}
+function texLin(u) {
+  const parts = [];
+  VARS.forEach(sym => {
+    const x = u[sym];
+    if (Math.abs(x) < 1e-12) return;
+    const f = frac(Math.abs(x));
+    let body;
+    if (f) { const nm = f[0] === 1 ? sym : `${f[0]}${sym}`; body = f[1] === 1 ? nm : T`\tfrac{${nm}}{${f[1]}}`; }
+    else body = T`${tn(Math.abs(x))}\,${sym}`;
+    parts.push({ neg: x < 0, body });
+  });
+  if (Math.abs(u.n) > 1e-12) parts.push({ neg: u.n < 0, body: tn(Math.abs(u.n)) });
+  if (!parts.length) return "0";
+  return parts.map((q, i) => i === 0 ? (q.neg ? "-" : "") + q.body : (q.neg ? " - " : " + ") + q.body).join("");
+}
+const linTerms = u => [...VARS, "n"].filter(k => Math.abs(u[k]) > 1e-12).length;
+const linZero = u => linTerms(u) === 0;
+const texLinP = u => { const t = texLin(u); return (linTerms(u) > 1 || t.startsWith("-")) ? `(${t})` : t; };
+
+/* ---------- layouts ---------- */
+// x to the right, y up, origin at A. The horizontal part runs from A (x = 0) to beamEnd.
+// rod: the vertical rod (base on the horizontal part, top above it); body = which side of the hinge it belongs to.
+// Supports: fixed (A_x, A_y, M_A), pin (x, y), rollerX (x only: roller on a vertical wall), rollerY (y only).
+const PRESETS = [
+  {
+    id: "1", title: "1. változat",
+    desc: "A befogás a bal falban. Az AC egyenes rúd C-ben csuklóval kapcsolódik az L-alakú rúdhoz, amelynek függőleges szára a jobb végén felfelé fut. B görgős támasz egy függőleges falon (csak vízszintes reakció). A p terhelés C-től a jobb végig lefelé hat, F felfelé C-től b-re.",
+    years: "Minta: 1 db 2026/27-es lap",
+    pts: { A: ["0", "0"], C: ["a", "0"], E: ["a+b", "0"], D: ["a+b+c", "0"], B: ["a+b+c", "k"] },
+    sheetNames: ["A", "B", "C"],
+    beamEnd: "D",
+    rod: { base: "D", top: "B", body: 2 },
+    supA: { at: "A", type: "fixed" },
+    supB: { at: "B", type: "rollerX", wall: "right" },
+    p: { from: "C", to: "D", dir: -1 },
+    F: { at: "E", dir: [0, 1] },
+    bodyDesc: { 1: "A–C egyenes rúd", 2: "C–E–D–B L-alakú rúd" },
+    plan: [
+      { b: 2, t: "M", O: "C", u: "Bx" }, { b: 2, t: "x", u: "Cx" }, { b: 2, t: "y", u: "Cy" },
+      { b: 1, t: "x", u: "Ax" }, { b: 1, t: "y", u: "Ay" }, { b: 1, t: "M", O: "A", u: "MA" },
+    ],
+    check: "B",
+    dims: [["A", "C", "a"], ["C", "E", "b"], ["E", "D", "c"]],
+    kSide: -1,
+    labels: { A: [12, 18], C: [12, 18], E: [-12, 18], D: [12, 18], B: [-14, -12] },
+    example: { a: "1", b: "0.5", c: "0.8", k: "0.4", p: "6", F: "6" },
+    exampleNote: "bemutató adatok (nem egy konkrét lapról). Eredmény: A = (5,175; 1,8) kN, M_A = 1,8 kNm, B_x = −5,175 kN, x* = 1,3 m, M_h(x*) = −0,27 kNm.",
+  },
+  {
+    id: "2", title: "2. változat",
+    desc: "A befogás a bal falban. Az L-alakú rúd A-tól C-ig vízszintes, C-ben k magas függőleges szár áll, ennek tetején F jobbra hat. C-ben csuklóval kapcsolódik a CB egyenes rúd, B görgős támasz a talajon (csak függőleges reakció). A p terhelés A-tól a+b hosszon lefelé hat.",
+    years: "Minta: 1 db 2023/24-es, kijavított lap",
+    pts: { A: ["0", "0"], C: ["a", "0"], D: ["a", "k"], E: ["a+b", "0"], B: ["a+b+c", "0"] },
+    sheetNames: ["A", "B", "C"],
+    beamEnd: "B",
+    rod: { base: "C", top: "D", body: 1 },
+    supA: { at: "A", type: "fixed" },
+    supB: { at: "B", type: "rollerY" },
+    p: { from: "A", to: "E", dir: -1 },
+    F: { at: "D", dir: [1, 0] },
+    bodyDesc: { 1: "A–C–D L-alakú rúd", 2: "C–E–B egyenes rúd" },
+    plan: [
+      { b: 2, t: "M", O: "C", u: "By" }, { b: 2, t: "x", u: "Cx" }, { b: 2, t: "y", u: "Cy" },
+      { b: 1, t: "x", u: "Ax" }, { b: 1, t: "y", u: "Ay" }, { b: 1, t: "M", O: "A", u: "MA" },
+    ],
+    check: "B",
+    dims: [["A", "C", "a"], ["C", "E", "b"], ["E", "B", "c"]],
+    kSide: 1,
+    labels: { A: [12, 18], C: [12, 18], E: [12, 18], B: [-14, -14], D: [13, -8] },
+    example: { a: "0.8", b: "0.5", c: "0.6", k: "0.3", p: "4", F: "3" },
+    exampleNote: "a kijavított 2023/24-es lap adatai. A lap eredményei: A_x = −3, A_y = 4,7455, M_A = 3,4164, B_x = 0, B_y = 0,455, x_V = 0, V = 4,7455, x_Mh = 0, M_h = 3,4164, x* = 1,1863, M_h(x*) = −0,2983.",
+  },
+];
+const presetById = id => PRESETS.find(p => p.id === id) || PRESETS[0];
+
+const FIELD = {
+  a: { tex: "a", unit: "m", positive: true },
+  b: { tex: "b", unit: "m", positive: true },
+  c: { tex: "c", unit: "m", positive: true },
+  k: { tex: "k", unit: "m", positive: true },
+  p: { tex: "p", unit: "kN/m", positive: true },
+  F: { tex: "F", unit: "kN", positive: true },
+};
+const FIELD_IDS = Object.keys(FIELD);
+const GROUPS = [{ title: "Hosszak", ids: ["a", "b", "c", "k"] }, { title: "Terhelés", ids: ["p", "F"] }];
+const DEFAULTS = PRESETS[0].example;
+const defaultsRaw = () => Object.assign({}, DEFAULTS);
+const state = { preset: "1", raw: defaultsRaw(), rodOrigin: "base" };
+
+/* ---------- model ---------- */
+const SUP_UNK = { fixed: ["x", "y", "M"], pin: ["x", "y"], rollerX: ["x"], rollerY: ["y"] };
+const ukey = (at, cp) => cp === "M" ? "M" + at : at + cp;
+const utex = (at, cp) => cp === "M" ? `M_{${at}}` : `${at}_${cp}`;
+
+// quadratic through f at 3 interior points of [x0, x1]; returns coefficients in u = x - x0
+function fit(f, x0, x1) {
+  const d = (x1 - x0) / 4;
+  const y1 = f(x0 + d), y2 = f(x0 + 2 * d), y3 = f(x0 + 3 * d);
+  let c2 = (y3 - 2 * y2 + y1) / (2 * d * d);
+  let c1 = (y2 - y1) / d - 3 * d * c2;
+  let c0 = y1 - c1 * d - c2 * d * d;
+  const sc = Math.max(1, Math.abs(y1), Math.abs(y2), Math.abs(y3));
+  if (Math.abs(c2) * (x1 - x0) * (x1 - x0) < 1e-9 * sc) c2 = 0;
+  if (Math.abs(c1) * (x1 - x0) < 1e-9 * sc) c1 = 0;
+  if (Math.abs(c0) < 1e-9 * sc) c0 = 0;
+  return [c0, c1, c2];
+}
+const pev = (c, u) => c[0] + c[1] * u + c[2] * u * u;
+const pder = (c, u) => c[1] + 2 * c[2] * u;
+// coefficients in global x from local u = x - x0
+const toGlobal = (c, x0) => [c[0] - c[1] * x0 + c[2] * x0 * x0, c[1] - 2 * c[2] * x0, c[2]];
+
+function compute(v, pr) {
+  const G = {}, P = {};
+  Object.keys(pr.pts).forEach(n => { G[n] = pr.pts[n].map(lin); P[n] = G[n].map(u => linEval(u, v)); });
+  const L = P[pr.beamEnd][0];
+  const xC = P.C[0];
+  const rb = pr.rod.base, rt = pr.rod.top;
+  const xb = P[rb][0], yb = P[rb][1], h = P[rt][1] - yb, hL = linSub(G[rt][1], G[rb][1]);
+  const isRod = n => Math.abs(P[n][0] - xb) < 1e-12 && P[n][1] > yb + 1e-12;
+  const bodyOf = n => isRod(n) ? pr.rod.body : (P[n][0] < xC - 1e-12 ? 1 : 2);
+  const R = { pr, v, G, P, L, xC, xb, yb, h, hL, rb, rt, isRod, bodyOf };
+
+  // loads
+  const Fd = pr.F.dir;
+  const comp = (d, n, val) => d ? { s: Math.sign(d), n, val } : null;
+  const loadF = { key: "F", name: pr.F.at, pt: P[pr.F.at], L: G[pr.F.at], F: [Fd[0] * v.F, Fd[1] * v.F], cx: comp(Fd[0], "F", v.F), cy: comp(Fd[1], "F", v.F), rod: isRod(pr.F.at), body: bodyOf(pr.F.at), cls: "load" };
+  const q = pr.p.dir * v.p; // vertical intensity, negative = downward
+  const dist = { s: P[pr.p.from][0], e: P[pr.p.to][0], sL: G[pr.p.from][0], eL: G[pr.p.to][0], q, from: pr.p.from, to: pr.p.to };
+  dist.len = dist.e - dist.s; dist.lenL = linSub(dist.eL, dist.sL);
+  dist.mid = (dist.s + dist.e) / 2; dist.midL = linMul(linAdd(dist.sL, dist.eL), 0.5);
+  const parts = [];
+  if (dist.s < xC - 1e-12) parts.push({ body: 1, s: dist.s, sL: dist.sL, e: Math.min(dist.e, xC), eL: dist.e <= xC + 1e-12 ? dist.eL : G.C[0], from: pr.p.from, to: dist.e <= xC + 1e-12 ? pr.p.to : "C" });
+  if (dist.e > xC + 1e-12) parts.push({ body: 2, s: Math.max(dist.s, xC), sL: dist.s >= xC - 1e-12 ? dist.sL : G.C[0], e: dist.e, eL: dist.eL, from: dist.s >= xC - 1e-12 ? pr.p.from : "C", to: pr.p.to });
+  parts.forEach(pt => {
+    pt.len = pt.e - pt.s; pt.lenL = linSub(pt.eL, pt.sL);
+    pt.mid = (pt.s + pt.e) / 2; pt.midL = linMul(linAdd(pt.sL, pt.eL), 0.5);
+    pt.R = Math.abs(q) * pt.len; pt.dir = Math.sign(q);
+    pt.name = parts.length > 1 ? `P_${pt.body}` : "P";
+  });
+  Object.assign(R, { loadF, q, dist, parts });
+
+  // unknowns
+  const sups = [pr.supA, pr.supB];
+  const unk = [];
+  sups.forEach(s => SUP_UNK[s.type].forEach(cp => unk.push({ key: ukey(s.at, cp), tex: utex(s.at, cp), at: s.at, cp })));
+  unk.push({ key: "Cx", tex: "C_x", at: "C", cp: "x", hinge: true }, { key: "Cy", tex: "C_y", at: "C", cp: "y", hinge: true });
+  R.unk = unk;
+
+  function bodyActs(b) {
+    const acts = [];
+    sups.forEach(s => {
+      if (bodyOf(s.at) !== b) return;
+      const ks = SUP_UNK[s.type];
+      const c = cp => ks.includes(cp) ? { s: 1, n: utex(s.at, cp), unk: ukey(s.at, cp) } : null;
+      acts.push({ kind: "F", name: s.at, pt: P[s.at], L: G[s.at], cx: c("x"), cy: c("y"), cls: "reac" });
+      if (ks.includes("M")) acts.push({ kind: "M", name: utex(s.at, "M"), cm: { s: 1, n: utex(s.at, "M"), unk: ukey(s.at, "M") }, at: s.at });
+    });
+    const hs = b === 2 ? 1 : -1;
+    acts.push({ kind: "F", name: "C", pt: P.C, L: G.C, cx: { s: hs, n: "C_x", unk: "Cx" }, cy: { s: hs, n: "C_y", unk: "Cy" }, cls: "res" });
+    if (loadF.body === b) acts.push({ kind: "F", name: "F", pt: loadF.pt, L: loadF.L, cx: loadF.cx, cy: loadF.cy, cls: "load" });
+    parts.filter(pt => pt.body === b).forEach(pt => acts.push({ kind: "F", name: pt.name, pt: [pt.mid, 0], L: [pt.midL, L0()], cx: null, cy: { s: pt.dir, n: pt.name, val: pt.R }, cls: "load", part: pt }));
+    return acts;
+  }
+  R.bodyActs = bodyActs;
+
+  // equation terms: sg · arm · component
+  function rowTerms(acts, t, O) {
+    const terms = [];
+    acts.forEach(a => {
+      if (a.kind === "M") { if (t === "M") terms.push({ sg: a.cm.s, arm: null, armV: 1, c: a.cm }); return; }
+      if (t === "x" && a.cx) terms.push({ sg: a.cx.s, arm: null, armV: 1, c: a.cx });
+      if (t === "y" && a.cy) terms.push({ sg: a.cy.s, arm: null, armV: 1, c: a.cy });
+      if (t === "M") {
+        let dxL = linSub(a.L[0], G[O][0]), dyL = linSub(a.L[1], G[O][1]);
+        let dx = linEval(dxL, v), dy = linEval(dyL, v);
+        // moment = dx·Fy − dy·Fx ; keep the arms positive, fold the sign into sg
+        if (a.cy && Math.abs(dx) > 1e-12) { let sg = a.cy.s; if (dx < 0) { sg = -sg; dxL = linMul(dxL, -1); dx = -dx; } terms.push({ sg, arm: dxL, armV: dx, c: a.cy }); }
+        if (a.cx && Math.abs(dy) > 1e-12) { let sg = -a.cx.s; if (dy < 0) { sg = -sg; dyL = linMul(dyL, -1); dy = -dy; } terms.push({ sg, arm: dyL, armV: dy, c: a.cx }); }
+      }
+    });
+    return terms;
+  }
+  R.rowTerms = rowTerms;
+
+  const sol = {};
+  const steps = [];
+  for (const st of pr.plan) {
+    const terms = rowTerms(bodyActs(st.b), st.t, st.O);
+    let coef = 0, rest = 0;
+    for (const t of terms) {
+      const w = t.sg * t.armV;
+      if (t.c.unk === st.u) coef += w;
+      else if (t.c.unk) { if (!(t.c.unk in sol)) return Object.assign(R, { bad: "plan" }); rest += w * sol[t.c.unk]; }
+      else rest += w * t.c.val;
+    }
+    if (Math.abs(coef) < 1e-12) return Object.assign(R, { bad: "degenerate" });
+    sol[st.u] = -rest / coef;
+    steps.push(Object.assign({}, st, { terms, coef, rest }));
+  }
+  if (unk.some(u => !(u.key in sol))) return Object.assign(R, { bad: "plan" });
+  ["Ax", "Ay", "MA", "Bx", "By"].forEach(k => { if (!(k in sol)) sol[k] = 0; });
+  R.sol = sol; R.steps = steps;
+
+  // all external actions on the whole structure (reactions now known)
+  const acts = [];
+  sups.forEach(s => {
+    const ks = SUP_UNK[s.type];
+    const c = cp => ks.includes(cp) ? { s: 1, n: utex(s.at, cp), val: sol[ukey(s.at, cp)] } : null;
+    acts.push({ kind: "F", name: s.at, pt: P[s.at], L: G[s.at], F: [ks.includes("x") ? sol[ukey(s.at, "x")] : 0, ks.includes("y") ? sol[ukey(s.at, "y")] : 0], cx: c("x"), cy: c("y"), rod: isRod(s.at), cls: "reac" });
+    if (ks.includes("M")) acts.push({ kind: "M", name: utex(s.at, "M"), pt: P[s.at], M: sol[ukey(s.at, "M")], cm: { s: 1, n: utex(s.at, "M"), val: sol[ukey(s.at, "M")] }, rod: isRod(s.at) });
+  });
+  acts.push(Object.assign({ kind: "F" }, loadF));
+  R.acts = acts;
+
+  // global equilibrium residual (sanity check)
+  let sx = 0, sy = 0, sm = 0;
+  acts.forEach(a => { if (a.kind === "M") { sm += a.M; return; } sx += a.F[0]; sy += a.F[1]; sm += a.pt[0] * a.F[1] - a.pt[1] * a.F[0]; });
+  sy += q * dist.len; sm += dist.mid * q * dist.len;
+  const scale = Math.max(1, v.F, v.p * L) * Math.max(1, L);
+  R.residual = Math.max(Math.abs(sx), Math.abs(sy), Math.abs(sm)) / scale;
+
+  /* ----- internal forces on the horizontal part (origin A, x to the right, left side = A side) ----- */
+  const actX = a => a.rod ? xb : a.pt[0];
+  function beamLeft(x) {
+    let Fx = 0, Fy = 0, M = 0;
+    acts.forEach(a => {
+      if (!(actX(a) < x)) return;
+      if (a.kind === "M") { M += a.M; return; }
+      Fx += a.F[0]; Fy += a.F[1]; M += (a.pt[0] - x) * a.F[1] - a.pt[1] * a.F[0];
+    });
+    const e2 = Math.min(x, dist.e);
+    if (e2 > dist.s) { const Rr = q * (e2 - dist.s), xc = (dist.s + e2) / 2; Fy += Rr; M += (xc - x) * Rr; }
+    return { N: -Fx, V: Fy, M };
+  }
+  // breakpoints (named points on the horizontal part)
+  const beamPts = Object.keys(P).filter(n => Math.abs(P[n][1]) < 1e-12 && P[n][0] >= -1e-12 && P[n][0] <= L + 1e-12);
+  let xs = [0, L, xC, xb, dist.s, dist.e];
+  acts.forEach(a => xs.push(actX(a)));
+  xs = xs.filter(x => x >= -1e-12 && x <= L + 1e-12).sort((p1, p2) => p1 - p2);
+  const brk = [];
+  xs.forEach(x => { if (!brk.length || x - brk[brk.length - 1] > 1e-9) brk.push(x); });
+  const nameAt = x => beamPts.filter(n => Math.abs(P[n][0] - x) < 1e-9).sort((n1, n2) => (n1 === "C" ? -1 : 0) - (n2 === "C" ? -1 : 0))[0];
+  const segs = [];
+  for (let i = 0; i + 1 < brk.length; i++) {
+    const x0 = brk[i], x1 = brk[i + 1], len = x1 - x0;
+    const n0 = nameAt(x0), n1 = nameAt(x1);
+    const seg = { i, x0, x1, len, n0, n1, L0: G[n0][0], L1: G[n1][0] };
+    ["N", "V", "M"].forEach(k => { seg[k] = fit(x => beamLeft(x)[k], x0, x1); });
+    seg.N[1] = 0; seg.N[2] = 0; seg.V[2] = 0;
+    seg.vals = { N: [pev(seg.N, 0), pev(seg.N, len)], V: [pev(seg.V, 0), pev(seg.V, len)], M: [pev(seg.M, 0), pev(seg.M, len)] };
+    seg.parab = nz(seg.M[2]);
+    segs.push(seg);
+  }
+  R.segs = segs; R.beamLeft = beamLeft;
+
+  // |V| maximum
+  const vmax = Math.max(...segs.map(s => Math.max(Math.abs(s.vals.V[0]), Math.abs(s.vals.V[1]))));
+  R.Vext = extremes(segs, "V", vmax, []);
+  // local extrema of Mh (V = 0 inside a parabolic segment)
+  const stars = [], starEnds = [];
+  segs.forEach(s => {
+    if (!s.parab) return;
+    const u = -s.M[1] / (2 * s.M[2]);
+    const tol = 1e-9 * Math.max(1, s.len);
+    if (u > tol && u < s.len - tol) stars.push({ x: s.x0 + u, M: pev(s.M, u), V: pev(s.V, u), seg: s.i });
+    else if (Math.abs(u) <= tol || Math.abs(u - s.len) <= tol) starEnds.push({ x: s.x0 + (Math.abs(u) <= tol ? 0 : s.len), M: pev(s.M, u), seg: s.i, end: Math.abs(u) <= tol ? 0 : 1 });
+  });
+  R.stars = stars; R.starEnds = starEnds;
+  const mmax = Math.max(...segs.map(s => Math.max(Math.abs(s.vals.M[0]), Math.abs(s.vals.M[1]))), ...stars.map(s => Math.abs(s.M)));
+  R.Mext = extremes(segs, "M", mmax, stars);
+
+  /* ----- vertical rod (local coordinate ξ from the chosen origin) ----- */
+  function rodLeft(s, mode) {
+    const yS = mode === "base" ? yb + s : yb + h - s, xS = xb;
+    let Fx = 0, Fy = 0, M = 0;
+    acts.forEach(a => {
+      const above = a.rod && a.pt[1] > yS;
+      const inLeft = mode === "base" ? !above : above;
+      if (!inLeft) return;
+      if (a.kind === "M") { M += a.M; return; }
+      Fx += a.F[0]; Fy += a.F[1]; M += (a.pt[0] - xS) * a.F[1] - (a.pt[1] - yS) * a.F[0];
+    });
+    if (mode === "base") { const Rr = q * dist.len; Fy += Rr; M += (dist.mid - xS) * Rr; }
+    const et = mode === "base" ? [0, 1] : [0, -1], en = [-et[1], et[0]];
+    return { N: -(Fx * et[0] + Fy * et[1]), V: Fx * en[0] + Fy * en[1], M };
+  }
+  R.rodLeft = rodLeft;
+  R.rod = {};
+  ["base", "top"].forEach(mode => {
+    // breakpoints along the rod (heights of rod actions), in the local coordinate
+    let ss = [0, h];
+    acts.forEach(a => { if (a.rod) { const hh = a.pt[1] - yb; ss.push(mode === "base" ? hh : h - hh); } });
+    ss = ss.filter(x => x >= -1e-12 && x <= h + 1e-12).sort((p1, p2) => p1 - p2);
+    const sb = [];
+    ss.forEach(x => { if (!sb.length || x - sb[sb.length - 1] > 1e-9) sb.push(x); });
+    const rs = [];
+    for (let i = 0; i + 1 < sb.length; i++) {
+      const x0 = sb[i], x1 = sb[i + 1], len = x1 - x0;
+      const seg = { i, x0, x1, len };
+      ["N", "V", "M"].forEach(k => { seg[k] = fit(x => rodLeft(x, mode)[k], x0, x1); });
+      seg.vals = { N: [pev(seg.N, 0), pev(seg.N, len)], V: [pev(seg.V, 0), pev(seg.V, len)], M: [pev(seg.M, 0), pev(seg.M, len)] };
+      seg.parab = nz(seg.M[2]);
+      rs.push(seg);
+    }
+    R.rod[mode] = rs;
+  });
+  // continuity check at the rod base: rod (base origin) vs the horizontal part, M at the base
+  return R;
+}
+
+// locations where |f| reaches its maximum fmax (f = "V" or "M") on the horizontal part
+function extremes(segs, k, fmax, stars) {
+  const tol = 1e-9 * Math.max(1, fmax);
+  const hits = [];
+  segs.forEach(s => {
+    const c = s[k];
+    const constSeg = !nz(c[1]) && !nz(c[2]);
+    if (constSeg && Math.abs(Math.abs(s.vals[k][0]) - fmax) <= tol) { hits.push({ x0: s.x0, x1: s.x1, val: s.vals[k][0], iv: true }); return; }
+    [0, 1].forEach(e => { if (Math.abs(Math.abs(s.vals[k][e]) - fmax) <= tol) hits.push({ x0: e ? s.x1 : s.x0, x1: e ? s.x1 : s.x0, val: s.vals[k][e], side: e ? "-" : "+", seg: s.i }); });
+  });
+  if (k === "M") stars.forEach(st => { if (Math.abs(Math.abs(st.M) - fmax) <= tol) hits.push({ x0: st.x, x1: st.x, val: st.M, star: true }); });
+  // merge: adjacent intervals with the same value, and point hits inside intervals or duplicated
+  hits.sort((h1, h2) => h1.x0 - h2.x0 || (h2.iv ? 1 : 0) - (h1.iv ? 1 : 0));
+  const out = [];
+  hits.forEach(hh => {
+    const last = out[out.length - 1];
+    if (last && Math.abs(last.val - hh.val) <= tol && hh.x0 <= last.x1 + 1e-9) { last.x1 = Math.max(last.x1, hh.x1); last.iv = last.iv || hh.iv; if (hh.side) last.sides = (last.sides || []).concat(hh.side); return; }
+    out.push(Object.assign({}, hh, { sides: hh.side ? [hh.side] : [] }));
+  });
+  return { max: fmax, list: out };
+}
+
+/* ---------- KaTeX helpers ---------- */
+function renderTex(el, tex, display) {
+  if (window.katex) {
+    try { window.katex.render(tex, el, { displayMode: !!display, throwOnError: false, strict: false }); return; }
+    catch (e) { /* fall through */ }
+  }
+  el.textContent = tex;
+  el.classList.add("tex-fallback");
+}
+function rich(el, str) {
+  el.textContent = "";
+  str.split(/(\$[^$]+\$)/).forEach(part => {
+    if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
+      const s = document.createElement("span");
+      renderTex(s, part.slice(1, -1), false);
+      el.appendChild(s);
+    } else if (part) el.appendChild(document.createTextNode(part));
+  });
+}
+function parseNum(str) {
+  if (str == null) return NaN;
+  const s = String(str).trim().replace(/\s+/g, "").replace(/−/g, "-").replace(",", ".");
+  if (s === "") return NaN;
+  if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return parseFloat(s);
+}
+
+/* ---------- storage ---------- */
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable */ } }
+function load() { try { const s = localStorage.getItem(STORE_KEY); if (s) return JSON.parse(s); } catch (e) { /* ignore */ } return null; }
+
+/* ---------- presets ---------- */
+const THUMB_V = { a: 1, b: 0.8, c: 0.8, k: 0.45, p: 5, F: 5 };
+function buildPresets() {
+  const host = $("#presets");
+  host.innerHTML = "";
+  PRESETS.forEach(pr => {
+    const lab = document.createElement("label");
+    lab.className = "preset" + (pr.id === state.preset ? " selected" : "");
+    lab.innerHTML = `<input type="radio" name="preset" value="${pr.id}"${pr.id === state.preset ? " checked" : ""}>
+      <svg class="thumb scene" role="img" aria-label="${pr.title} ábrája"></svg>
+      <div class="preset-head"><span class="badge">${pr.id}</span>változat</div>
+      <p class="preset-desc">${pr.desc}</p>
+      <p class="preset-years">${pr.years}</p>`;
+    drawStructure($("svg", lab), compute(THUMB_V, pr), "thumb");
+    $("input", lab).addEventListener("change", () => selectPreset(pr.id));
+    host.appendChild(lab);
+  });
+}
+function selectPreset(id) {
+  state.preset = id;
+  document.querySelectorAll(".preset").forEach(el => el.classList.toggle("selected", $("input", el).value === id));
+  $("#example-note").hidden = true;
+  buildRodOrigin();
+  $("#footer-geo").textContent = geoText(presetById(id));
+  update();
+}
+
+/* ---------- inputs ---------- */
+function buildInputs() {
+  const host = $("#inputs");
+  host.innerHTML = "";
+  const order = [];
+  GROUPS.forEach(g => {
+    const wrap = document.createElement("div");
+    wrap.className = "group";
+    wrap.innerHTML = `<p class="group-title">${g.title}</p><div class="fields"></div>`;
+    const fieldsEl = $(".fields", wrap);
+    g.ids.forEach(id => {
+      const f = FIELD[id];
+      const d = document.createElement("div");
+      d.className = "field";
+      d.dataset.id = id;
+      d.innerHTML = `<label for="in-${id}"><span class="lt"></span><span class="u">[${f.unit}]</span></label>
+        <input id="in-${id}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false">`;
+      renderTex($(".lt", d), f.tex, false);
+      const inp = $("input", d);
+      inp.value = state.raw[id] ?? "";
+      inp.addEventListener("input", () => { state.raw[id] = inp.value; $("#example-note").hidden = true; schedule(); });
+      order.push(inp);
+      fieldsEl.appendChild(d);
+    });
+    host.appendChild(wrap);
+  });
+  order.forEach((el, i) => el.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); (order[i + 1] || order[0]).focus(); }
+  }));
+}
+function buildRodOrigin() {
+  const pr = presetById(state.preset);
+  const host = $("#rod-origin");
+  host.innerHTML = "";
+  [["base", `alsó vég (${pr.rod.base}, a sarokpont)`], ["top", `felső vég (${pr.rod.top})`]].forEach(([val, txt]) => {
+    const lab = document.createElement("label");
+    lab.innerHTML = `<input type="radio" name="rod-origin" value="${val}"${state.rodOrigin === val ? " checked" : ""}><span>${txt}</span>`;
+    $("input", lab).addEventListener("change", () => { state.rodOrigin = val; update(); });
+    host.appendChild(lab);
+  });
+}
+const SUPTXT = { fixed: "befogás", pin: "csukló", rollerX: "görgős támasz függőleges falon (csak vízszintes reakció)", rollerY: "görgős támasz vízszintes talajon (csak függőleges reakció)" };
+const dirWord = d => d[0] > 0 ? "jobbra" : d[0] < 0 ? "balra" : d[1] > 0 ? "felfelé" : "lefelé";
+function geoText(pr) {
+  const pts = Object.keys(pr.pts).map(k => `${k} = (${pr.pts[k].join("; ")})`).join(", ");
+  return `Az ábra értelmezése (${pr.title}): ${pts}. A: ${SUPTXT[pr.supA.type]}, B: ${SUPTXT[pr.supB.type]}, C belső csukló. A függőleges rúd ${pr.rod.base}–${pr.rod.top}. F ${art(pr.F.at)} ${pr.F.at} pontban ${dirWord(pr.F.dir)} hat, p ${pr.p.from}-${tol_(pr.p.from)} ${pr.p.to}-ig ${pr.p.dir < 0 ? "lefelé" : "felfelé"}. A lapon csak A, B és C van megnevezve, a D és E a kalkulátor jelölése.`;
+}
+function read() {
+  const val = {}, missing = [], bad = [];
+  FIELD_IDS.forEach(id => {
+    const f = FIELD[id], raw = state.raw[id] ?? "";
+    const x = parseNum(raw);
+    const ok = isFinite(x) && (!f.positive || x > 0);
+    const box = document.querySelector(`.field[data-id="${id}"]`);
+    if (box) box.classList.toggle("bad", raw.trim() !== "" && !ok);
+    if (raw.trim() === "") missing.push(f);
+    else if (!ok) bad.push(f);
+    val[id] = x;
+  });
+  return { v: val, missing, bad };
+}
+
+/* ---------- answers ---------- */
+const COPY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+const CHECK_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+const ANSWERS = [
+  { head: "1. feladat – reakciók", rows: [["Ax", "A_x", "kN"], ["Ay", "A_y", "kN"], ["MA", "M_A", "kNm"], ["Bx", "B_x", "kN"], ["By", "B_y", "kN"]] },
+  { head: "Vízszintes rúd – abszolút szélsőértékek", rows: [["xV", "x_V", "m"], ["VxV", "V(x_V)", "kN"], ["xM", "x_{M_h}", "m"], ["MxM", "M_h(x_{M_h})", "kNm"]] },
+  { head: "Lokális szélsőérték", rows: [["Vs", "V(x^\\star)", "kN"], ["xs", "x^\\star", "m"], ["Ms", "M_h(x^\\star)", "kNm"]] },
+];
+const ansEls = {};
+function buildAnswers() {
+  const host = $("#answers");
+  host.innerHTML = "";
+  ANSWERS.forEach(block => {
+    const b = document.createElement("div");
+    b.className = "ans-block";
+    b.innerHTML = `<p class="ans-head">${block.head}</p><div class="ans-grid"></div>`;
+    const grid = $(".ans-grid", b);
+    block.rows.forEach(([key, tex, unit]) => {
+      const row = document.createElement("div");
+      row.className = "ans-row";
+      row.innerHTML = `<span class="ans-label"><span class="lt"></span></span><output class="ans-val" data-key="${key}">—</output><span class="ans-unit">${unit}</span>
+        <button type="button" class="copy" aria-label="${key} másolása">${COPY_ICON}</button>`;
+      renderTex($(".lt", row), tex + ":", false);
+      const out = $(".ans-val", row), btn = $(".copy", row);
+      btn.addEventListener("click", () => copy(out.textContent, btn));
+      ansEls[key] = out;
+      grid.appendChild(row);
+    });
+    host.appendChild(b);
+  });
+}
+function copy(text, btn) {
+  if (!text || text === "—") return;
+  const done = () => {
+    btn.classList.add("done"); btn.innerHTML = CHECK_ICON;
+    setTimeout(() => { btn.classList.remove("done"); btn.innerHTML = COPY_ICON; }, 1200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text) && done());
+  } else if (fallbackCopy(text)) done();
+}
+function fallbackCopy(text) {
+  try {
+    const t = document.createElement("textarea");
+    t.value = text; t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select();
+    const ok = document.execCommand("copy"); t.remove(); return ok;
+  } catch (e) { return false; }
+}
+// location text of an extremum hit: a point, or an interval [x0; x1]
+const locText = hh => hh.iv && hh.x1 - hh.x0 > 1e-9 ? `[${num(hh.x0)}; ${num(hh.x1)}]` : num(hh.x0);
+const locTex = hh => hh.iv && hh.x1 - hh.x0 > 1e-9 ? T`[${tn(hh.x0)};\ ${tn(hh.x1)}]` : tn(hh.x0);
+function answerVals(R) {
+  const s = R.sol, V = R.Vext.list, M = R.Mext.list, st = R.stars;
+  return {
+    Ax: num(s.Ax), Ay: num(s.Ay), MA: num(s.MA), Bx: num(s.Bx), By: num(s.By),
+    xV: V.map(locText).join(" és "), VxV: [...new Set(V.map(hh => num(hh.val)))].join(" / "),
+    xM: M.map(locText).join(" és "), MxM: [...new Set(M.map(hh => num(hh.val)))].join(" / "),
+    Vs: "0", xs: st.length ? st.map(q => num(q.x)).join(" és ") : "—", Ms: st.length ? st.map(q => num(q.M)).join(" és ") : "—",
+  };
+}
+// the answer boxes use an ASCII minus so that a copied value can be pasted into Moodle
+function setAnswers(vals) { Object.keys(ansEls).forEach(k => { ansEls[k].textContent = vals ? vals[k].replace(/−/g, "-") : "—"; }); }
+
+/* ---------- results table (as on the sheet) ---------- */
+function setTable(vals) {
+  const host = $("#restable");
+  host.innerHTML = "";
+  const mk = (cols, cls) => {
+    const w = document.createElement("div");
+    w.className = "tabwrap";
+    const tb = document.createElement("table");
+    tb.className = "restab" + (cls ? " " + cls : "");
+    tb.innerHTML = `<thead><tr>${cols.map(c => `<th class="${c.sep ? "sep" : ""}" data-t="${c.t}"></th>`).join("")}</tr></thead>
+      <tbody><tr>${cols.map(c => `<td class="${(c.sep ? "sep " : "") + (c.fix ? "fix " : "") + "iv"}">${c.fix ? c.fix : vals ? vals[c.k] : "—"}</td>`).join("")}</tr></tbody>`;
+    tb.querySelectorAll("th").forEach(th => renderTex(th, th.dataset.t, false));
+    w.appendChild(tb);
+    host.appendChild(w);
+  };
+  mk([
+    { k: "Ax", t: T`A_x\ [\text{kN}]` }, { k: "Ay", t: T`A_y\ [\text{kN}]` }, { k: "MA", t: T`M_A\ [\text{kNm}]` },
+    { k: "xV", t: T`x_V\ [\text{m}]`, sep: true }, { k: "VxV", t: T`V(x_V)\ [\text{kN}]` }, { k: "xM", t: T`x_{M_h}\ [\text{m}]` }, { k: "MxM", t: T`M_h(x_{M_h})\ [\text{kNm}]` },
+  ]);
+  mk([{ k: "Bx", t: T`B_x\ [\text{kN}]` }, { k: "By", t: T`B_y\ [\text{kN}]` },
+    { k: "Vs", t: T`V(x^\star)`, sep: true, fix: "0" }, { k: "xs", t: T`x^\star\ [\text{m}]` }, { k: "Ms", t: T`M_h(x^\star)\ [\text{kNm}]` }], "narrow");
+}
+
+/* ---------- derivation ---------- */
+function step(title, items) {
+  const s = document.createElement("div");
+  s.className = "step";
+  const h = document.createElement("h3");
+  const ht = document.createElement("span");
+  rich(ht, title);
+  h.appendChild(ht);
+  s.appendChild(h);
+  items.forEach(it => s.appendChild(item(it)));
+  return s;
+}
+function item(it) {
+  if (it instanceof Node) return it;
+  if (it.h !== undefined) { const e = document.createElement("h4"); rich(e, it.h); return e; }
+  if (it.p !== undefined) { const e = document.createElement("p"); if (it.cls) e.className = it.cls; rich(e, it.p); return e; }
+  const e = document.createElement("div"); e.className = "math"; renderTex(e, it.m, true); return e;
+}
+function column(items) { const d = document.createElement("div"); items.forEach(it => d.appendChild(item(it))); return d; }
+function figure(caption, legend, draw, cls) {
+  const fig = document.createElement("figure");
+  fig.innerHTML = `<div class="${cls || "fig-box"}"><svg class="scene" role="img"></svg></div>${legend ? `<div class="legend">${legend}</div>` : ""}<figcaption>${caption}</figcaption>`;
+  const svg = $("svg", fig);
+  svg.setAttribute("aria-label", caption.replace(/<[^>]+>/g, ""));
+  draw(svg);
+  return fig;
+}
+const LEG = {
+  load: '<span><i style="background:var(--accent)"></i>terhelések</span>',
+  reac: '<span><i style="background:var(--rx)"></i>reakciók (felvett pozitív irány)</span>',
+  hinge: '<span><i style="background:var(--res)"></i>csuklóerő (C)</span>',
+  pres: '<span><i class="dash" style="background:var(--accent)"></i>megoszló terhelés eredője</span>',
+};
+const vec2 = (x, y) => T`\begin{bmatrix}${x}\\ ${y}\end{bmatrix}`;
+const SUPNAME = { fixed: "befogás", pin: "csukló", rollerX: "görgős támasz (függőleges fal)", rollerY: "görgős támasz (vízszintes talaj)" };
+const ROMAN = { 1: "I", 2: "II" };
+
+// one signed term of a sum, as TeX
+function joinParts(parts) {
+  const t = parts.filter(q => q && q.s);
+  if (!t.length) return "0";
+  return t.map((q, i) => i === 0 ? (q.neg ? "-" : "") + q.s : (q.neg ? " - " : " + ") + q.s).join("");
+}
+
+/* equation of a plan step: symbolic line, numeric line, result */
+function eqTex(R, st) {
+  const sol = R.sol;
+  const sym = st.terms.map(t => ({ neg: t.sg < 0, s: (t.arm ? texLinP(t.arm) + T`\,` : "") + t.c.n }));
+  const numP = [];
+  st.terms.forEach(t => {
+    if (t.c.unk === st.u) { numP.push({ neg: t.sg < 0, s: (t.arm ? tn(t.armV) + T`\,` : "") + t.c.n }); return; }
+    const val = t.c.unk ? sol[t.c.unk] : t.c.val;
+    if (!nz(val)) return;
+    numP.push({ neg: t.sg < 0, s: t.arm ? T`${tn(t.armV)}\cdot ${tp(val)}` : tp(val) });
+  });
+  const lhs = st.t === "M" ? T`\sum M^{(\mathrm{${ROMAN[st.b]}})}_{${st.O}}` : T`\sum F^{(\mathrm{${ROMAN[st.b]}})}_{${st.t}}`;
+  const u = R.unk.find(q => q.key === st.u);
+  const unit = st.u[0] === "M" ? U.kNm : U.kN;
+  return T`\begin{aligned}${lhs} &= ${joinParts(sym)} = 0\\ &\Rightarrow\ ${joinParts(numP)} = 0\\ &\Rightarrow\ ${u.tex} = ${tn(sol[st.u])}${unit}\end{aligned}`;
+}
+
+/* ---------- internal force function terms ---------- */
+const xFac = (xL, x) => linZero(xL) ? { s: "x", n: "x" } : { s: T`(x - ${texLinP(xL)})`, n: T`(x - ${tn(x)})` };
+// terms of N, V, M on a horizontal segment, from the forces left of the section
+function beamTerms(R, seg) {
+  const out = { N: [], V: [], M: [] };
+  const x0 = seg.x0, tol = 1e-9;
+  const actX = a => a.rod ? R.xb : a.pt[0];
+  R.acts.filter(a => a.kind === "M" && actX(a) <= x0 + tol).forEach(a => out.M.push({ sg: a.cm.s, sym: a.cm.n, val: a.cm.val }));
+  R.acts.filter(a => a.kind === "F" && actX(a) <= x0 + tol).forEach(a => {
+    if (a.cx) out.N.push({ sg: -a.cx.s, sym: a.cx.n, val: a.cx.val });
+    if (a.cy) {
+      out.V.push({ sg: a.cy.s, sym: a.cy.n, val: a.cy.val });
+      const f = xFac(a.L[0], a.pt[0]);
+      out.M.push({ sg: -a.cy.s, sym: a.cy.n, val: a.cy.val, fs: f.s, fn: f.n, x0: a.pt[0] });
+    }
+    if (a.cx && nz(a.pt[1])) out.M.push({ sg: -a.cx.s, sym: a.cx.n, val: a.cx.val, pre: texLinP(a.L[1]), preV: a.pt[1] });
+  });
+  const d = R.dist, sq = Math.sign(d.q), p = Math.abs(d.q);
+  if (d.s <= x0 + tol && d.e > x0 + tol) {
+    const f = xFac(d.sL, d.s);
+    out.V.push({ sg: sq, sym: "p", val: p, fs: f.s, fn: f.n, dist: "in" });
+    out.M.push({ sg: -sq, sym: T`\tfrac{p}{2}`, val: p / 2, fs: f.s + "^2", fn: f.n + "^2", dist: "in" });
+  } else if (d.e <= x0 + tol) {
+    const symP = T`p\,${texLinP(d.lenL)}`;
+    out.V.push({ sg: sq, sym: symP, val: p * d.len, dist: "out" });
+    out.M.push({ sg: -sq, sym: symP, val: p * d.len, fs: T`\left(x - ${texLinP(d.midL)}\right)`, fn: T`(x - ${tn(d.mid)})`, dist: "out" });
+  }
+  return out;
+}
+// terms on the vertical rod for the chosen origin
+function rodTerms(R, seg, mode) {
+  const out = { N: [], V: [], M: [] };
+  const tol = 1e-9, h = R.h;
+  R.acts.filter(a => a.kind === "F" && a.rod).forEach(a => {
+    const hi = a.pt[1] - R.yb, hiL = linSub(a.L[1], R.G[R.rb][1]);
+    if (mode === "base") {
+      if (!(hi >= seg.x1 - tol)) return;           // only the part above the section (right side)
+      if (a.cy) out.N.push({ sg: a.cy.s, sym: a.cy.n, val: a.cy.val });
+      if (a.cx) {
+        out.V.push({ sg: a.cx.s, sym: a.cx.n, val: a.cx.val });
+        out.M.push({ sg: a.cx.s, sym: a.cx.n, val: a.cx.val, fs: T`(${texLin(hiL)} - \xi)`, fn: T`(${tn(hi)} - \xi)` });
+      }
+    } else {
+      const dd = h - hi, ddL = linSub(R.hL, hiL);
+      if (!(dd <= seg.x0 + tol)) return;           // only the part above the section (left side)
+      if (a.cy) out.N.push({ sg: a.cy.s, sym: a.cy.n, val: a.cy.val });
+      if (a.cx) {
+        out.V.push({ sg: a.cx.s, sym: a.cx.n, val: a.cx.val });
+        const f = linZero(ddL) ? { s: T`\xi`, n: T`\xi` } : { s: T`(\xi - ${texLinP(ddL)})`, n: T`(\xi - ${tn(dd)})` };
+        out.M.push({ sg: -a.cx.s, sym: a.cx.n, val: a.cx.val, fs: f.s, fn: f.n });
+      }
+    }
+  });
+  return out;
+}
+function symLine(terms) {
+  return joinParts(terms.map(t => ({ neg: t.sg < 0, s: (t.pre ? t.pre + T`\,` : "") + t.sym + (t.fs ? T`\,${t.fs}` : "") })));
+}
+function numLine(terms) {
+  const parts = [];
+  terms.forEach(t => {
+    const c = t.sg * t.val * (t.preV != null ? t.preV : 1);
+    if (!nz(c)) return;
+    const a = Math.abs(c);
+    let s;
+    if (t.fn) s = Math.abs(a - 1) < 1e-12 ? t.fn : T`${tn(a)}\,${t.fn}`;
+    else s = tn(a);
+    parts.push({ neg: c < 0, s });
+  });
+  return joinParts(parts);
+}
+// numeric line with x replaced by a value
+function numLineAt(terms, xv) {
+  const parts = [];
+  terms.forEach(t => {
+    const c = t.sg * t.val * (t.preV != null ? t.preV : 1);
+    if (!nz(c)) return;
+    const a = Math.abs(c);
+    let s;
+    if (!t.fn) s = tn(a);
+    else {
+      const f = t.fn === "x" ? tp(xv) : t.fn.replace(/x/g, tn(xv));
+      s = Math.abs(a - 1) < 1e-12 ? f : T`${tn(a)}\cdot ${f}`;
+    }
+    parts.push({ neg: c < 0, s });
+  });
+  return joinParts(parts);
+}
+function polyTex(c, x) {
+  const parts = [];
+  if (nz(c[2])) parts.push({ neg: c[2] < 0, s: (Math.abs(Math.abs(c[2]) - 1) < 1e-12 ? "" : tn(Math.abs(c[2])) + T`\,`) + x + "^2" });
+  if (nz(c[1])) parts.push({ neg: c[1] < 0, s: (Math.abs(Math.abs(c[1]) - 1) < 1e-12 ? "" : tn(Math.abs(c[1])) + T`\,`) + x });
+  if (nz(c[0]) || !parts.length) parts.push({ neg: c[0] < 0, s: tn(Math.abs(c[0])) });
+  return joinParts(parts);
+}
+const needsExpand = terms => terms.some(t => t.fn && t.fn !== "x" && t.fn !== T`\xi`);
+function fnLines(name, arg, terms, coefG, unit, symOnlyIfEmpty) {
+  const sym = symLine(terms), numl = numLine(terms), poly = polyTex(coefG, arg);
+  let tex = T`${name}(${arg}) &= ${sym}`;
+  if (!terms.length) return T`${name}(${arg}) &= 0${unit}`;
+  const plain = numl === poly;
+  tex += T` &&= ${numl}`;
+  if (!plain && needsExpand(terms)) tex += T` = ${poly}`;
+  return tex + unit;
+}
+
+function renderSteps(R) {
+  const host = $("#steps");
+  host.innerHTML = "";
+  const pr = R.pr, v = R.v, P = R.P, G = R.G, sol = R.sol;
+  const supA = pr.supA, supB = pr.supB;
+
+  /* 1. geometry and loads */
+  const ptLines = Object.keys(pr.pts).map(n => T`${n} &: (${texLin(G[n][0])};\ ${texLin(G[n][1])}) &&= (${tn(P[n][0])};\ ${tn(P[n][1])})${U.m}`);
+  const lf = R.loadF;
+  const fxs = lf.cx ? (lf.cx.s < 0 ? "-F" : "F") : "0", fys = lf.cy ? (lf.cy.s < 0 ? "-F" : "F") : "0";
+  const loadTex = T`\underline{F} = ${vec2(fxs, fys)} = ${vec2(tn(lf.F[0]), tn(lf.F[1]))}${U.kN}\quad(\text{${art(lf.name)} ${lf.name} pontban})`;
+  const qTex = T`\underline{q} = ${R.q < 0 ? "-" : ""}p\,\underline{j} = ${tn(R.q)}\,\underline{j}${U.kNpm}\quad(\text{${R.dist.from}–${R.dist.to} között, hossza } ${texLin(R.dist.lenL)} = ${tn(R.dist.len)}${U.m})`;
+  const supVec = s => {
+    const ks = SUP_UNK[s.type];
+    const fx = ks.includes("x") ? `${s.at}_x` : "0", fy = ks.includes("y") ? `${s.at}_y` : "0";
+    let t = T`\underline{F}_{${s.at}} = ${vec2(fx, fy)}`;
+    if (ks.includes("M")) t += T`,\quad \underline{M}_{${s.at}} = M_{${s.at}}\,\underline{k}`;
+    return t;
+  };
+  const nUnk = R.unk.length;
+  const fig1 = figure("Méretarányos ábra (1. feladatrész): a hosszak arányosak a megadott a, b, c, k értékekkel. Az erők nyilai és a megoszló terhelés magassága nem méretarányos.", LEG.load, svg => drawStructure(svg, R, "struct"));
+  host.appendChild(step("Méretarányos ábra, pontok és terhelések", [
+    fig1,
+    { p: "Az origó az A pontban van, az x tengely jobbra, az y felfelé mutat, a nyomaték az óramutató járásával ellentétes forgás esetén pozitív. A vektorokat aláhúzás jelöli, $\\underline{i}, \\underline{j}, \\underline{k}$ az x, y, z irányú egységvektor. A lapon csak A, B és C van megnevezve, a többi pontot D és E jelöli (lásd az ábrát)." },
+    { m: T`\begin{aligned}${ptLines.join(T`\\`)}\end{aligned}` },
+    { p: "A terhelések:" },
+    { m: T`\begin{aligned}&${loadTex}\\ &${qTex}\end{aligned}` },
+    { p: `Megtámasztás: A ${SUPNAME[supA.type]}, B ${SUPNAME[supB.type]}${supB.type === "rollerX" ? ", ezért B-ben csak vízszintes erő ébred ($B_y = 0$)" : supB.type === "rollerY" ? ", ezért B-ben csak függőleges erő ébred ($B_x = 0$)" : ""}. C belső csukló: nyomatékot nem visz át.` },
+    { m: T`${supVec(supA)},\qquad ${supVec(supB)}` },
+    { p: `Statikai határozottság: 2 merev test × 3 egyensúlyi egyenlet = 6 egyenlet. Ismeretlen ${nUnk}: ${R.unk.map(u => "$" + u.tex + "$").join(", ")}. A szerkezet statikailag határozott.`, cls: "note" },
+  ]));
+
+  /* 2. reactions */
+  const items2 = [];
+  items2.push(figure("Szabadtest-ábrák a C csuklónál szétválasztva. A reakciókat és a csuklóerőt pozitív irányban vettük fel; ha az eredmény negatív, a valódi irány ellentétes. A megoszló terhelést eredőjével helyettesítjük.", LEG.reac + LEG.hinge + LEG.load + LEG.pres, svg => drawStructure(svg, R, "fbd")));
+  items2.push({ p: `A C csuklóban a II. részre $\\underline{F}_C = [C_x;\\ C_y]^T$, az I. részre $-\\underline{F}_C$ hat. I. rész: ${pr.bodyDesc[1]}, II. rész: ${pr.bodyDesc[2]}.` });
+  const pLines = R.parts.map(pt => T`${pt.name} &= p\,${texLinP(pt.lenL)} = ${tn(v.p)}\cdot ${tp(pt.len)} = ${tn(pt.R)}${U.kN}, &&\text{támadáspontja } x = ${texLin(pt.midL)} = ${tn(pt.mid)}${U.m}`);
+  items2.push({ p: R.parts.length > 1 ? "A megoszló terhelés a C csuklón átnyúlik, ezért részenként helyettesítjük az eredőjével (a terhelt szakasz közepén):" : "A megoszló terhelés eredője a terhelt szakasz közepén hat:" });
+  items2.push({ m: T`\begin{aligned}${pLines.join(T`\\`)}\end{aligned}` });
+  [2, 1].forEach(b => {
+    const sts = R.steps.filter(s => s.b === b);
+    if (!sts.length) return;
+    const Mpt = sts.find(s => s.t === "M");
+    items2.push({ h: `${ROMAN[b]}. rész (${pr.bodyDesc[b]})` });
+    items2.push({ m: T`\sum \underline{F}^{(\mathrm{${ROMAN[b]}})} = \underline{0},\qquad \sum \underline{M}^{(\mathrm{${ROMAN[b]}})}_{${Mpt ? Mpt.O : "C"}} = \underline{0}` });
+    items2.push({ p: b === 2 ? `A II. részre ható ismeretlenek közül csak egy nem megy át C-n, ezért a C-re felírt nyomatéki egyenlettel kezdünk, majd a két vetületi egyenletből adódik a csuklóerő.` : `A csuklóerő már ismert, így az I. rész három egyensúlyi egyenletéből az A támasz ismeretlenei egyenként adódnak.` });
+    sts.forEach(st => items2.push({ m: eqTex(R, st) }));
+  });
+  const vecRes = s => {
+    const ks = SUP_UNK[s.type];
+    let t = T`\underline{F}_{${s.at}} = ${vec2(tn(ks.includes("x") ? sol[s.at + "x"] : 0), tn(ks.includes("y") ? sol[s.at + "y"] : 0))}${U.kN}`;
+    if (ks.includes("M")) t += T`,\qquad \underline{M}_{${s.at}} = ${tn(sol["M" + s.at])}\,\underline{k}${U.kNm}`;
+    return t;
+  };
+  items2.push({ p: "A reakciók vektorosan:" });
+  items2.push({ m: T`\begin{aligned}&${vecRes(supA)}\\ &${vecRes(supB)}\\ &\underline{F}_{C} = ${vec2(tn(sol.Cx), tn(sol.Cy))}${U.kN}\ \ (\text{a II. részre})\end{aligned}` });
+  // check: moment of the whole structure about the check point
+  const O = pr.check;
+  let chkTerms = [], chk = 0;
+  R.acts.forEach(a => {
+    if (a.kind === "M") { chk += a.M; if (nz(a.M)) chkTerms.push(a.M); return; }
+    const m = (a.pt[0] - P[O][0]) * a.F[1] - (a.pt[1] - P[O][1]) * a.F[0];
+    if (nz(m)) { chk += m; chkTerms.push(m); }
+  });
+  const dm = (R.dist.mid - P[O][0]) * R.q * R.dist.len;
+  chk += dm; if (nz(dm)) chkTerms.push(dm);
+  chkTerms = chkTerms.map(m => typeof m === "string" ? parseFloat(m.replace(/[()]/g, "").replace("{,}", ".")) : m);
+  items2.push({ p: `Ellenőrzés: a teljes szerkezetre ${art(O)} ${O} pontra felírt nyomatéki egyenletnek is teljesülnie kell. A tagok a reakciók, az F erő és a megoszló terhelés nyomatékai, kNm-ben:` });
+  items2.push({ m: T`\sum M_{${O}} = ${joinParts(chkTerms.map(m => ({ neg: m < 0, s: tn(Math.abs(m)) })))} = ${tn(chk)}\ \checkmark` });
+  host.appendChild(step("Reakciók: szétbontás a C csuklóban", items2));
+
+  /* 3. horizontal part */
+  const items3 = [];
+  items3.push({ p: "Előjelkonvenció (a tárgy szerint): a metszettől balra lévő rész erőit redukáljuk a metszet pontjába. N a húzásra pozitív, V a balra lévő erők függőleges összege (felfelé pozitív), $M_h$ a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív, vagyis a felső szál húzott). Ebből következik, hogy $M_h'(x) = -V(x)$, és $V'(x) = -p$ a terhelt szakaszon." });
+  items3.push({ m: T`N(x) = -\sum F^{(\mathrm{b})}_x,\qquad V(x) = \sum F^{(\mathrm{b})}_y,\qquad M_h(x) = \sum M^{(\mathrm{b})}_{z}(x)` });
+  items3.push({ p: `A koordinátarendszer origója az A pontban van, x jobbra mutat, $0 \\le x \\le ${texLin(G[pr.beamEnd][0])}$. A szakaszhatárok ott vannak, ahol koncentrált erő vagy nyomaték hat, a megoszló terhelés kezdődik vagy véget ér, a csukló vagy a függőleges rúd csatlakozik.` });
+  R.segs.forEach((s, i) => {
+    const t = beamTerms(R, s);
+    const box = document.createElement("div");
+    box.className = "seg";
+    const hh = document.createElement("h4");
+    rich(hh, `${i + 1}. szakasz: ${s.n0}–${s.n1}  `);
+    const nk = document.createElement("span"); nk.className = "nk";
+    rich(nk, `$${texLin(s.L0)} \\le x \\le ${texLin(s.L1)}$, azaz $${tn(s.x0)} \\le x \\le ${tn(s.x1)}$ m`);
+    hh.appendChild(nk);
+    box.appendChild(hh);
+    const lines = [
+      fnLines("N", "x", t.N, toGlobal(s.N, s.x0), U.kN),
+      fnLines("V", "x", t.V, toGlobal(s.V, s.x0), U.kN),
+      fnLines("M_h", "x", t.M, toGlobal(s.M, s.x0), U.kNm),
+    ];
+    box.appendChild(item({ m: T`\begin{aligned}${lines.join(T`\\`)}\end{aligned}` }));
+    if (s.parab) {
+      const gm = toGlobal(s.M, s.x0), gv = toGlobal(s.V, s.x0);
+      box.appendChild(item({ p: `Ellenőrzés: $M_h'(x) = ${polyTex([gm[1], 2 * gm[2], 0], "x")} = -V(x)$, mert $V(x) = ${polyTex(gv, "x")}$.`, cls: "note" }));
+    }
+    items3.push(box);
+  });
+  host.appendChild(step("Igénybevételi függvények – vízszintes rész", items3));
+
+  /* 4. vertical rod */
+  const mode = state.rodOrigin, rseg = R.rod[mode];
+  const items4 = [];
+  const base = pr.rod.base, top = pr.rod.top;
+  if (mode === "base") {
+    items4.push({ p: `A függőleges rúd saját koordinátája ξ, origója ${art(base)} ${base} sarokpontban van, ξ ${art(top)} ${top} pont felé (felfelé) mutat, $0 \\le \\xi \\le k$. A rudat 90°-kal elforgatva nézzük úgy, hogy ξ jobbra mutasson. Ekkor a metszettől „balra” ${art(base)} ${base} felőli rész (a teljes többi szerkezet) van, a rúd lokális y iránya pedig a globális −x irány.` });
+    items4.push({ p: `A metszet fölötti, ${top} felőli részen kevesebb erő hat, ezért azokkal számolunk. Az egész szerkezet egyensúlyban van, így a bal oldali erők ezek ellentettjei: $N = \\sum F^{(\\mathrm{j})}_{y}$, $V = \\sum F^{(\\mathrm{j})}_{x}$, $M_h = -\\sum M^{(\\mathrm{j})}$ (a j index a metszet fölötti részt jelöli).` });
+  } else {
+    items4.push({ p: `A függőleges rúd saját koordinátája ξ, origója ${art(top)} ${top} pontban (a rúd felső végén) van, ξ lefelé, ${art(base)} ${base} sarokpont felé mutat, $0 \\le \\xi \\le k$. A rudat 90°-kal elforgatva nézzük úgy, hogy ξ jobbra mutasson. Ekkor a metszettől „balra” ${art(top)} ${top} felőli rész van, a rúd lokális y iránya pedig a globális +x irány.` });
+    items4.push({ p: `A bal oldal erői közvetlenül összegezhetők: $N = \\sum F^{(\\mathrm{b})}_{y}$, $V = \\sum F^{(\\mathrm{b})}_{x}$, $M_h = \\sum M^{(\\mathrm{b})}$ a metszet pontjára.` });
+  }
+  rseg.forEach(s => {
+    const t = rodTerms(R, s, mode);
+    const lines = [
+      fnLines("N", T`\xi`, t.N, toGlobal(s.N, s.x0), U.kN),
+      fnLines("V", T`\xi`, t.V, toGlobal(s.V, s.x0), U.kN),
+      fnLines("M_h", T`\xi`, t.M, toGlobal(s.M, s.x0), U.kNm),
+    ];
+    const box = document.createElement("div");
+    box.className = "seg";
+    const hh = document.createElement("h4");
+    rich(hh, `${mode === "base" ? base : top}–${mode === "base" ? top : base}  `);
+    const nk = document.createElement("span"); nk.className = "nk";
+    rich(nk, `$${tn(s.x0)} \\le \\xi \\le ${tn(s.x1)}$ m`);
+    hh.appendChild(nk); box.appendChild(hh);
+    box.appendChild(item({ m: T`\begin{aligned}${lines.join(T`\\`)}\end{aligned}` }));
+    items4.push(box);
+  });
+  const mb = R.rod.base[0].vals.M[0];
+  const mMinus = R.xb > 1e-9 ? R.beamLeft(R.xb - 1e-9).M : 0, mPlus = R.xb < R.L - 1e-9 ? R.beamLeft(R.xb + 1e-9).M : 0;
+  items4.push({ p: `Ellenőrzés ${art(base)} ${base} csomópontban (alsó origóval számolva): a rúd alsó végén $M_h = ${tn(mb)}$ kNm. Ennek meg kell egyeznie a vízszintes rész nyomatékának ugrásával a csatlakozásnál: $M_h(x_{${base}}^-) - M_h(x_{${base}}^+) = ${tp(mMinus)} - ${tp(mPlus)} = ${tn(mMinus - mPlus)}$ kNm${R.xb >= R.L - 1e-9 ? ` (a rúd a vízszintes rész végén csatlakozik, ezért ott $M_h(x_{${base}}^+) = 0$)` : ""}.${mode === "top" ? " Felső origóval a rúd iránya megfordul, ezért a rúd $M_h$ értékei ellentétes előjelűek." : ""}`, cls: "note" });
+  host.appendChild(step("Igénybevételi függvények – függőleges rúd", items4));
+
+  /* 5. characteristic values, tangents, extrema */
+  const items5 = [];
+  const tb = document.createElement("div");
+  tb.className = "tabwrap";
+  const rows = [];
+  R.segs.forEach((s, i) => {
+    [0, 1].forEach(e => {
+      const x = e ? s.x1 : s.x0, nm = e ? s.n1 : s.n0;
+      const slope = s.parab ? tn(-s.vals.V[e]) : "";
+      rows.push(`<tr><td class="lbl">${e ? "" : (i + 1) + ". szakasz"}</td><td>${nm}${e ? " (bal)" : " (jobb)"}</td><td>${num(x)}</td><td>${num(s.vals.N[e])}</td><td>${num(s.vals.V[e])}</td><td>${num(s.vals.M[e])}</td><td>${s.parab ? num(-s.vals.V[e]) : "—"}</td></tr>`);
+    });
+  });
+  tb.innerHTML = `<table class="restab"><thead><tr><th>Szakasz</th><th>Pont</th><th>x [m]</th><th>N [kN]</th><th>V [kN]</th><th>M<sub>h</sub> [kNm]</th><th>érintő: M<sub>h</sub>′ = −V [kN]</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  items5.push({ p: "Jellegzetes értékek a vízszintes rész szakaszhatárain. A „(jobb)” a szakasz kezdőpontjától közvetlenül jobbra, a „(bal)” a végpontjától közvetlenül balra vett értéket jelenti, így az ugrások mindkét oldala látszik." });
+  items5.push(tb);
+  const pars = R.segs.filter(s => s.parab);
+  if (pars.length) items5.push({ p: `Parabolaív ${art(pars[0].n0)} ${pars.map(s => s.n0 + "–" + s.n1).join(" és ")} szakaszon van. Az érintők meredeksége a végpontokban $M_h' = -V$ (táblázat utolsó oszlopa). A két végponti érintő a szakasz felezőpontja fölött metszi egymást, így az érintők szerkesztése: mindkét végpontból a megadott meredekséggel húzott egyenes a felezőig.` });
+  // x*
+  R.stars.forEach(st => {
+    const s = R.segs[st.seg];
+    const c0 = s.V[0], c1 = s.V[1];
+    const tv = beamTerms(R, s).V, tm = beamTerms(R, s).M;
+    items5.push({ p: `Lokális szélsőérték ${art(s.n0)} ${s.n0}–${s.n1} szakaszon, ahol a nyíróerő előjelet vált:` });
+    const tvs = tv.map(t => Object.assign({}, t, { fs: t.fs ? t.fs.replace(/x/g, T`x^\star`) : t.fs }));
+    items5.push({ m: T`\begin{aligned}V(x^\star) &= ${symLine(tvs)} = 0\\ &\Rightarrow\ ${tn(c0)} ${c1 < 0 ? "-" : "+"} ${tn(Math.abs(c1))}\,(x^\star - ${tn(s.x0)}) = 0\\ &\Rightarrow\ x^\star = ${tn(s.x0)} + ${tp(-c0 / c1)} = ${tn(st.x)}${U.m}\\ M_h(x^\star) &= ${numLineAt(tm, st.x)} = ${tn(st.M)}${U.kNm}\end{aligned}` });
+  });
+  if (!R.stars.length) items5.push({ p: "Egyik parabolaíves szakasz belsejében sem vált előjelet a nyíróerő, így ott nincs lokális szélsőérték. Ellenőrizd az elrendezést és az adatokat.", cls: "warnp" });
+  R.starEnds.forEach(se => {
+    const s = R.segs[se.seg];
+    items5.push({ p: `${Art(s.n0)} ${s.n0}–${s.n1} szakasz ${se.end ? "végpontjában (" + s.n1 + ")" : "kezdőpontjában (" + s.n0 + ")"} $V = 0$, ezért ott a parabola csúcsa van, az érintő vízszintes ($M_h = ${tn(se.M)}$ kNm). Ez a szakasz végpontja, nem belső szélsőérték.`, cls: "note" });
+  });
+  const vx = R.Vext.list, mx = R.Mext.list;
+  const sideTxt = hh => hh.iv ? "a teljes szakaszon" : hh.sides && hh.sides.length === 1 ? (hh.sides[0] === "+" ? "a pont jobb oldalán" : "a pont bal oldalán") : "";
+  items5.push({ p: `Abszolút szélsőértékek a vízszintes részen: $|V|_{\\max} = ${tn(R.Vext.max)}$ kN, helye $x_V = ${vx.map(locTex).join(T`\text{ és }`)}$ m (${vx.map(sideTxt).filter(Boolean).join(", ") || "egy pontban"}), $V(x_V) = ${[...new Set(vx.map(hh => tn(hh.val)))].join(" / ")}$ kN. $|M_h|_{\\max} = ${tn(R.Mext.max)}$ kNm, helye $x_{M_h} = ${mx.map(locTex).join(T`\text{ és }`)}$ m, $M_h(x_{M_h}) = ${[...new Set(mx.map(hh => tn(hh.val)))].join(" / ")}$ kNm.` });
+  // rod values
+  const rtb = document.createElement("div");
+  rtb.className = "tabwrap";
+  const rrows = [];
+  rseg.forEach(s => [0, 1].forEach(e => rrows.push(`<tr><td>${num(e ? s.x1 : s.x0)}</td><td>${num(s.vals.N[e])}</td><td>${num(s.vals.V[e])}</td><td>${num(s.vals.M[e])}</td></tr>`)));
+  rtb.innerHTML = `<table class="restab narrow"><thead><tr><th>ξ [m]</th><th>N [kN]</th><th>V [kN]</th><th>M<sub>h</sub> [kNm]</th></tr></thead><tbody>${rrows.join("")}</tbody></table>`;
+  items5.push({ p: `A függőleges rúd jellegzetes értékei (origó: ${mode === "base" ? base : top}):` });
+  items5.push(rtb);
+  host.appendChild(step("Jellegzetes értékek, érintők, szélsőértékek", items5));
+
+  /* 6. diagrams */
+  const items6 = [];
+  items6.push({ p: "A pozitív értékeket felfelé rajzoltuk. Az $M_h$ ábra így mindig a húzott oldalra kerül. A szaggatott kék vonalak a parabolaívek végponti érintői, a piros pont a lokális szélsőérték." });
+  items6.push(figure("Igénybevételi ábrák, vízszintes rész (x az A ponttól). A vízszintes lépték méretarányos, a függőleges léptékek ábránként eltérnek.", "", svg => drawDiagrams(svg, R, "beam"), "dg-box"));
+  items6.push(figure(`Igénybevételi ábrák, függőleges rúd (ξ a ${mode === "base" ? base : top} ponttól, a rudat 90°-kal elforgatva ábrázolva).`, "", svg => drawDiagrams(svg, R, "rod"), "dg-box rod"));
+  host.appendChild(step("Igénybevételi ábrák", items6));
+}
+
+/* ---------- drawing ---------- */
+const f1 = x => String(Math.round(x * 10) / 10);
+const ptsStr = arr => arr.map(q => f1(q[0]) + "," + f1(q[1])).join(" ");
+function svgHead(tip, d, h, w) {
+  const px = -d[1], py = d[0];
+  return `<polygon points="${f1(tip[0])},${f1(tip[1])} ${f1(tip[0] - d[0] * h + px * w)},${f1(tip[1] - d[1] * h + py * w)} ${f1(tip[0] - d[0] * h - px * w)},${f1(tip[1] - d[1] * h - py * w)}"/>`;
+}
+function makeCanvas(mini) {
+  const pts = [];
+  const B = { dims: [], box: [], rods: [], sups: [], load: [], pres: [], reac: [], res: [], marks: [], text: [] };
+  const track = (...ps) => ps.forEach(q => pts.push(q));
+  const HS = mini ? 14 : 10;
+  function arrow(bucket, A, Bp, hs = HS) {
+    const dx = Bp[0] - A[0], dy = Bp[1] - A[1], len = Math.hypot(dx, dy);
+    if (len < 1) return null;
+    const d = [dx / len, dy / len];
+    const h = Math.min(hs, len * 0.45), w = h * 0.38;
+    const E = [Bp[0] - d[0] * h * 0.8, Bp[1] - d[1] * h * 0.8];
+    bucket.push(`<line x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(E[0])}" y2="${f1(E[1])}"/>` + svgHead(Bp, d, h, w));
+    track(A, Bp);
+  }
+  function label(x, y, main, sb, cls = "", anchor = "middle") {
+    const cw = mini ? 12.5 : 8.8;
+    const w = main.length * cw + (sb ? sb.length * cw * 0.7 : 0);
+    const x0 = anchor === "start" ? x : anchor === "end" ? x - w : x - w / 2;
+    track([x0 - 2, y - (mini ? 14 : 11)], [x0 + w + 2, y + (mini ? 14 : 11)]);
+    const subT = sb ? `<tspan class="s" dy="4">${sb}</tspan>` : "";
+    B.text.push(`<text x="${f1(x)}" y="${f1(y)}" class="${cls}"${anchor !== "middle" ? ` style="text-anchor:${anchor}"` : ""}>${main}${subT}</text>`);
+  }
+  function line(bucket, A, Bp, cls) {
+    bucket.push(`<line${cls ? ` class="${cls}"` : ""} x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(Bp[0])}" y2="${f1(Bp[1])}"/>`);
+    track(A, Bp);
+  }
+  function finish(svg, pad0) {
+    const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+    const pad = pad0 != null ? pad0 : (mini ? 10 : 12);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    svg.setAttribute("viewBox", `${f1(minX - pad)} ${f1(minY - pad)} ${f1(maxX - minX + 2 * pad)} ${f1(maxY - minY + 2 * pad)}`);
+    svg.innerHTML = `<g class="dim">${B.dims.join("")}</g>` + B.box.join("") + B.rods.join("") + B.sups.join("") + B.marks.join("") +
+      `<g class="load">${B.load.join("")}</g><g class="pres">${B.pres.join("")}</g><g class="reac">${B.reac.join("")}</g><g class="res">${B.res.join("")}</g>` + B.text.join("");
+  }
+  return { pts, B, track, arrow, label, line, finish, HS };
+}
+// arc arrow (counterclockwise on screen) around c with radius r
+function ccwArc(cv, bucket, c, r, cls, startDeg = -60, spanDeg = 180) {
+  const a1 = startDeg * Math.PI / 180, a2 = (startDeg - spanDeg) * Math.PI / 180;
+  const P1 = [c[0] + r * Math.cos(a1), c[1] + r * Math.sin(a1)], P2 = [c[0] + r * Math.cos(a2), c[1] + r * Math.sin(a2)];
+  const d = [Math.sin(a2), -Math.cos(a2)];
+  bucket.push(`<path class="${cls}" d="M${f1(P1[0])},${f1(P1[1])} A${f1(r)},${f1(r)} 0 ${spanDeg > 180 ? 1 : 0} 0 ${f1(P2[0])},${f1(P2[1])}"/>` +
+    `<g class="${cls === "marc" ? "reac" : "axis"}">${svgHead([P2[0] + d[0] * 3, P2[1] + d[1] * 3], d, 8, 3.4)}</g>`);
+  cv.track([c[0] - r - 2, c[1] - r - 2], [c[0] + r + 2, c[1] + r + 2]);
+  return P2;
+}
+function outLabel(cv, far, u, main, sb, cls, gap = 8) {
+  const anchor = u[0] > 0.3 ? "start" : u[0] < -0.3 ? "end" : "middle";
+  const x = far[0] + u[0] * gap, y = far[1] + (Math.abs(u[1]) > 0.3 ? u[1] * (gap + 5) : 0);
+  cv.label(x, y, main, sb, cls, anchor);
+}
+
+function drawStructure(svg, R, mode) {
+  const mini = mode === "thumb", fbd = mode === "fbd";
+  const cv = makeCanvas(mini);
+  const pr = R.pr, P = R.P;
+  const W = mini ? 360 : 600, s = W / R.L, gap = fbd ? 130 : 0;
+  const rbody = pr.rod.body;
+  const bodyX = (x, b) => x * s + (fbd && b === 2 ? gap : 0);
+  const S = (n, b) => [bodyX(P[n][0], b != null ? b : R.bodyOf(n)), -P[n][1] * s];
+  const Hq = mini ? 30 : 28, LF = mini ? 50 : 44;
+  const ivl = { 1: [0, R.xC], 2: [R.xC, R.L] };
+  // members
+  const mem = [[[bodyX(0, 1), 0], [bodyX(R.xC, 1), 0]], [[bodyX(R.xC, 2), 0], [bodyX(R.L, 2), 0]], [S(R.rb, rbody), S(R.rt, rbody)]];
+  mem.forEach(([A, Bp]) => { cv.line(cv.B.rods, A, Bp, "rod-edge"); cv.line(cv.B.rods, A, Bp, "rod"); });
+  // occupied directions at a point of a body (screen unit vectors)
+  const occ = (n, b) => {
+    const o = [], x = P[n][0];
+    if (R.isRod(n)) { o.push([0, 1]); return o; }
+    const [x0, x1] = ivl[b];
+    if (x > x0 + 1e-9) o.push([-1, 0]);
+    if (x < x1 - 1e-9) o.push([1, 0]);
+    if (n === R.rb && b === rbody) o.push([0, -1]);
+    return o;
+  };
+  // rigid corner mark at the rod base
+  const bS = S(R.rb, rbody), cs = mini ? 10 : 8;
+  const [bx0, bx1] = ivl[rbody];
+  if (R.xb > bx0 + 1e-9) cv.B.marks.push(`<polygon class="corner" points="${ptsStr([[bS[0] - cs, bS[1]], bS, [bS[0], bS[1] - cs]])}"/>`);
+  if (R.xb < bx1 - 1e-9) cv.B.marks.push(`<polygon class="corner" points="${ptsStr([[bS[0] + cs, bS[1]], bS, [bS[0], bS[1] - cs]])}"/>`);
+  // hinge
+  const hr = mini ? 6 : 4.6;
+  (fbd ? [1, 2] : [1]).forEach(b => { const c = [bodyX(R.xC, b), 0]; cv.B.marks.push(`<circle class="hinge" cx="${f1(c[0])}" cy="${f1(c[1])}" r="${hr}"/>`); cv.track([c[0] - hr, c[1] - hr], [c[0] + hr, c[1] + hr]); });
+  // distributed load (box with hatch and arrows)
+  const boxes = fbd ? R.parts.map(pt => ({ s: pt.s, e: pt.e, b: pt.body, pt })) : [{ s: R.dist.s, e: R.dist.e, b: null }];
+  boxes.forEach(bx => {
+    const x0 = bodyX(bx.s, bx.b || (bx.s < R.xC - 1e-9 ? 1 : 2)), x1 = bodyX(bx.e, bx.b || (bx.e <= R.xC + 1e-9 ? 1 : 2));
+    const xa = fbd ? x0 : bx.s * s, xe = fbd ? x1 : bx.e * s;
+    const st = mini ? 9 : 7;
+    let hatch = "";
+    for (let x = xa + st; x < xe - 1; x += st) hatch += `<line class="phatch" x1="${f1(x)}" y1="0" x2="${f1(x)}" y2="${f1(-Hq)}"/>`;
+    cv.B.box.push(hatch + `<polyline class="pbox" points="${ptsStr([[xa, 0], [xa, -Hq], [xe, -Hq], [xe, 0]])}"/>`);
+    cv.track([xa, -Hq], [xe, 0]);
+    const n = Math.max(2, Math.min(4, Math.round((xe - xa) / 90) + 1));
+    const rodX = bodyX(R.xb, rbody), rodIn = !fbd || bx.b === rbody;
+    for (let i = 0; i < n; i++) {
+      let x = xa + (xe - xa) * (i + 0.5) / n;
+      if (rodIn && Math.abs(x - rodX) < 13) x = rodX + (x <= rodX ? -13 : 13);
+      if (x < xa + 4 || x > xe - 4) continue;
+      if (R.pr.p.dir < 0) cv.arrow(cv.B.load, [x, -Hq + 2], [x, -2], mini ? 11 : 8); else cv.arrow(cv.B.load, [x, -2], [x, -Hq + 2], mini ? 11 : 8);
+    }
+    cv.label(xa + (xe - xa) * 0.5 / n + (mini ? 12 : 9), -Hq / 2 - 2, "p", "", "t-load halo", "start");
+    if (fbd) {
+      const xm = (xa + xe) / 2, top = -Hq - 34;
+      if (R.pr.p.dir < 0) cv.arrow(cv.B.pres, [xm, top], [xm, -2]); else cv.arrow(cv.B.pres, [xm, -2], [xm, top]);
+      const nm = bx.pt.name;
+      cv.label(xm + 6, top - 2, nm.split("_")[0], nm.split("_")[1] || "", "t-load halo", "start");
+    }
+  });
+  // supports (structure view) / reactions (FBD)
+  if (!fbd) {
+    const A = S("A", 1), wl = mini ? 26 : 22;
+    let str = `<line class="sup" x1="${f1(A[0])}" y1="${f1(A[1] - wl)}" x2="${f1(A[0])}" y2="${f1(A[1] + wl)}"/>`;
+    for (let i = 0; i < 6; i++) { const yy = A[1] - wl + 2 + i * (2 * wl - 4) / 5; str += `<line class="hatch" x1="${f1(A[0])}" y1="${f1(yy)}" x2="${f1(A[0] - 7)}" y2="${f1(yy + 7)}"/>`; }
+    cv.B.sups.push(str); cv.track([A[0] - 9, A[1] - wl], [A[0], A[1] + wl]);
+    drawRollerOrPin(cv, S(pr.supB.at), pr.supB, mini);
+  } else {
+    const placeIn = (q, u, bucket, nm, sb, cls, o, Lr = mini ? 44 : 40) => {
+      // arrow pointing along u with its head at q when the incoming side is free, otherwise its tail at q
+      const inc = [-u[0], -u[1]];
+      const blocked = o.some(d => d[0] * inc[0] + d[1] * inc[1] > 0.9);
+      if (!blocked) { const far = [q[0] - u[0] * Lr, q[1] - u[1] * Lr]; cv.arrow(bucket, far, [q[0] - u[0] * 3, q[1] - u[1] * 3]); outLabel(cv, far, inc, nm, sb, cls + " halo"); }
+      else { const far = [q[0] + u[0] * Lr, q[1] + u[1] * Lr]; cv.arrow(bucket, [q[0] + u[0] * 3, q[1] + u[1] * 3], far); outLabel(cv, far, u, nm, sb, cls + " halo"); }
+    };
+    [pr.supA, pr.supB].forEach(sp => {
+      const b = R.bodyOf(sp.at), q = S(sp.at, b), o = occ(sp.at, b), ks = SUP_UNK[sp.type];
+      if (ks.includes("x")) placeIn(q, [1, 0], cv.B.reac, sp.at, "x", "t-rx", o);
+      if (ks.includes("y")) placeIn(q, [0, -1], cv.B.reac, sp.at, "y", "t-rx", o);
+      if (ks.includes("M")) { const r = mini ? 20 : 17; ccwArc(cv, cv.B.reac, q, r, "marc", -15, 150); cv.label(q[0] + 4, q[1] - r - 12, "M", sp.at, "t-rx halo"); }
+    });
+    [1, 2].forEach(b => {
+      const q = [bodyX(R.xC, b), 0], o = occ("C", b), sg = b === 2 ? 1 : -1;
+      placeIn(q, [sg, 0], cv.B.res, "C", "x", "t-res", o, 36);
+      placeIn(q, [0, -sg], cv.B.res, "C", "y", "t-res", o);
+    });
+  }
+  // concentrated load F: head at the point, coming from the opposite side
+  const lf = R.loadF, fq = S(lf.name, lf.body), fd = [Math.sign(lf.F[0]), -Math.sign(lf.F[1])];
+  const ftail = [fq[0] - fd[0] * LF, fq[1] - fd[1] * LF];
+  cv.arrow(cv.B.load, ftail, [fq[0] - fd[0] * 3, fq[1] - fd[1] * 3]);
+  if (fd[0] === 0) cv.label(ftail[0] + 8, ftail[1] + (fd[1] < 0 ? -6 : 6), "F", "", "t-load halo", "start");
+  else outLabel(cv, ftail, [-fd[0], -fd[1]], "F", "", "t-load halo");
+  // point labels
+  Object.keys(P).forEach(n => {
+    const off = pr.labels[n] || [10, 16];
+    const bodies = fbd && n === "C" ? [1, 2] : [R.bodyOf(n)];
+    bodies.forEach(b => {
+      const q = S(n, b);
+      const dx = fbd && n === "C" ? (b === 1 ? -12 : 12) : off[0];
+      cv.label(q[0] + dx * (mini ? 1.25 : 1), q[1] + off[1] * (mini ? 1.25 : 1), n, "", (pr.sheetNames.includes(n) ? "" : "t-our ") + "halo");
+    });
+  });
+  if (!fbd) {
+    // dimensions
+    const dy = mini ? 84 : 76;
+    pr.dims.forEach(([n1, n2, lab]) => {
+      const x1 = P[n1][0] * s, x2 = P[n2][0] * s;
+      cv.line(cv.B.dims, [x1, 6], [x1, dy + 5]); cv.line(cv.B.dims, [x2, 6], [x2, dy + 5]);
+      cv.arrow(cv.B.dims, [(x1 + x2) / 2, dy], [x1, dy], 7); cv.arrow(cv.B.dims, [(x1 + x2) / 2, dy], [x2, dy], 7);
+      cv.label((x1 + x2) / 2, dy - 10, lab, "", "t-dim halo");
+    });
+    const kx = R.xb * s + pr.kSide * (mini ? 26 : 20), ky = -R.h * s;
+    cv.arrow(cv.B.dims, [kx, ky / 2], [kx, 0], 7); cv.arrow(cv.B.dims, [kx, ky / 2], [kx, ky], 7);
+    cv.line(cv.B.dims, [R.xb * s + pr.kSide * 4, ky], [kx + pr.kSide * 5, ky]);
+    cv.label(kx + pr.kSide * 9, ky / 2, "k", "", "t-dim halo", pr.kSide > 0 ? "start" : "end");
+    if (!mini) {
+      // coordinate system and positive rotation
+      const O = [W + 92, -6], la = 34;
+      const ax = [];
+      ax.push(`<line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + la - 6}" y2="${O[1]}"/>` + svgHead([O[0] + la, O[1]], [1, 0], 8, 3.2));
+      ax.push(`<line x1="${O[0]}" y1="${O[1]}" x2="${O[0]}" y2="${O[1] - la + 6}"/>` + svgHead([O[0], O[1] - la], [0, -1], 8, 3.2));
+      cv.B.dims.push(`<g class="axis">${ax.join("")}</g>`);
+      cv.track([O[0], O[1] - la], [O[0] + la, O[1]]);
+      cv.label(O[0] + la + 8, O[1], "x", "", "t-axis", "start");
+      cv.label(O[0] + 9, O[1] - la, "y", "", "t-axis", "start");
+      const e = ccwArc(cv, cv.B.dims, [O[0] - 3, O[1]], 11, "axis-arc", -60, 180);
+      cv.B.dims[cv.B.dims.length - 1] = cv.B.dims[cv.B.dims.length - 1].replace('class="axis-arc"', 'class="" style="fill:none;stroke:var(--muted);stroke-width:1.3"');
+      cv.label(O[0] - 10, O[1] + 22, "+", "", "t-axis");
+      // origin marker at A
+      cv.B.marks.push(`<circle class="origin" cx="0" cy="0" r="2.6"/>`);
+    }
+  }
+  cv.finish(svg, mini ? 8 : 12);
+}
+function drawRollerOrPin(cv, q, sp, mini) {
+  const h = mini ? 18 : 15, w = mini ? 11 : 9, r = mini ? 4.6 : 3.8;
+  const [x, y] = q;
+  let str = "";
+  if (sp.type === "rollerX") {
+    const sg = sp.wall === "left" ? -1 : 1;
+    const bx = x + sg * h;
+    str += `<polygon class="sup" points="${ptsStr([[x, y], [bx, y - w], [bx, y + w]])}"/>`;
+    str += `<circle class="roller" cx="${f1(bx + sg * r)}" cy="${f1(y)}" r="${r}"/>`;
+    const wx = bx + sg * 2 * r;
+    str += `<line class="sup" x1="${f1(wx)}" y1="${f1(y - w - 8)}" x2="${f1(wx)}" y2="${f1(y + w + 8)}"/>`;
+    for (let i = 0; i < 6; i++) { const yy = y - w - 6 + i * (2 * w + 12) / 5; str += `<line class="hatch" x1="${f1(wx)}" y1="${f1(yy)}" x2="${f1(wx + sg * 7)}" y2="${f1(yy - 7)}"/>`; }
+    cv.track([Math.min(x, wx + sg * 9), y - w - 9], [Math.max(x, wx + sg * 9), y + w + 9]);
+  } else {
+    const gy = y + h;
+    str += `<polygon class="sup" points="${ptsStr([[x, y], [x - w, gy], [x + w, gy]])}"/>`;
+    let ground = gy;
+    if (sp.type === "rollerY") { str += `<circle class="roller" cx="${f1(x)}" cy="${f1(gy + r)}" r="${r}"/>`; ground = gy + 2 * r; }
+    str += `<line class="sup" x1="${f1(x - w - 8)}" y1="${f1(ground)}" x2="${f1(x + w + 8)}" y2="${f1(ground)}"/>`;
+    for (let i = 0; i < 6; i++) { const xx = x - w - 6 + i * (2 * w + 12) / 5; str += `<line class="hatch" x1="${f1(xx)}" y1="${f1(ground)}" x2="${f1(xx - 7)}" y2="${f1(ground + 7)}"/>`; }
+    cv.track([x - w - 15, y], [x + w + 9, ground + 9]);
+  }
+  cv.B.sups.push(str);
+}
+
+/* ---------- internal force diagrams ---------- */
+function drawDiagrams(svg, R, which) {
+  const beam = which === "beam";
+  const mode = state.rodOrigin;
+  const segs = beam ? R.segs : R.rod[mode];
+  const Lt = beam ? R.L : R.h;
+  const W = beam ? 640 : 300, sx = W / Lt, AMP = 40;
+  const X = x => x * sx;
+  const els = [];
+  let minY = 0, maxY = 0;
+  const panels = [["N", "N", "kN"], ["V", "V", "kN"], ["M", "M<tspan dy=\"3\" font-size=\"10\">h</tspan>", "kNm"]];
+  let top = 0;
+  const axes = [];
+  panels.forEach(([k, name, unit]) => {
+    let mx = 0;
+    segs.forEach(s => { mx = Math.max(mx, Math.abs(s.vals[k][0]), Math.abs(s.vals[k][1])); });
+    if (beam && k === "M") R.stars.forEach(st => { mx = Math.max(mx, Math.abs(st.M)); });
+    const sc = mx > 1e-9 ? AMP / mx : 0;
+    const base = top + AMP + 22;
+    axes.push(base);
+    const Y = val => base - val * sc;
+    els.push(`<text class="ttl" x="${f1(-58)}" y="${f1(top + 6)}">${name} [${unit}]</text>`);
+    // sample
+    const runs = [];
+    let path = `M${f1(X(segs[0].x0))},${f1(base)}`;
+    segs.forEach(s => {
+      const c = s[k], n = nz(c[2]) ? 48 : 1;
+      const smp = [];
+      for (let i = 0; i <= n; i++) { const u = s.len * i / n; smp.push([s.x0 + u, pev(c, u)]); }
+      smp.forEach(q => { path += ` L${f1(X(q[0]))},${f1(Y(q[1]))}`; });
+      // split into same-sign runs for the fill
+      let cur = null;
+      const push = (q) => { if (!cur) { cur = { pts: [q] }; } else cur.pts.push(q); };
+      for (let i = 0; i < smp.length; i++) {
+        const q = smp[i];
+        if (i > 0) {
+          const p0 = smp[i - 1];
+          if ((p0[1] > 1e-12 && q[1] < -1e-12) || (p0[1] < -1e-12 && q[1] > 1e-12)) {
+            const t = p0[1] / (p0[1] - q[1]);
+            const z = [p0[0] + t * (q[0] - p0[0]), 0];
+            push(z); runs.push(cur); cur = { pts: [z] };
+          }
+        }
+        push(q);
+      }
+      if (cur) runs.push(cur);
+    });
+    path += ` L${f1(X(segs[segs.length - 1].x1))},${f1(base)}`;
+    runs.forEach(run => {
+      const vals = run.pts.map(q => q[1]);
+      const mid = vals.reduce((a, b) => Math.abs(b) > Math.abs(a) ? b : a, 0);
+      if (!nz(mid)) return;
+      const poly = [[run.pts[0][0], 0], ...run.pts, [run.pts[run.pts.length - 1][0], 0]].map(q => [X(q[0]), Y(q[1])]);
+      els.push(`<polygon class="${mid > 0 ? "pos" : "neg"}" points="${ptsStr(poly)}"/>`);
+      const wpx = X(run.pts[run.pts.length - 1][0]) - X(run.pts[0][0]);
+      if (wpx > 26 && Math.abs(mid) * sc > 12) {
+        const xm = (run.pts[0][0] + run.pts[run.pts.length - 1][0]) / 2;
+        els.push(`<text class="sg" x="${f1(X(xm))}" y="${f1(base - Math.sign(mid) * Math.min(Math.abs(mid) * sc, 26) / 2)}">${mid > 0 ? "+" : "−"}</text>`);
+      }
+    });
+    els.push(`<line class="ax" x1="${f1(X(0))}" y1="${f1(base)}" x2="${f1(X(Lt))}" y2="${f1(base)}"/>`);
+    els.push(`<path class="crv" d="${path}"/>`);
+    // tangents of parabolic arcs
+    if (k === "M") segs.forEach(s => {
+      if (!s.parab) return;
+      const c = s.M, m0 = pder(c, 0), yI = pev(c, 0) + m0 * s.len / 2;
+      const A = [X(s.x0), Y(pev(c, 0))], Iq = [X(s.x0 + s.len / 2), Y(yI)], Bq = [X(s.x1), Y(pev(c, s.len))];
+      els.push(`<polyline class="tan" points="${ptsStr([A, Iq, Bq])}"/>`);
+      minY = Math.min(minY, Iq[1]); maxY = Math.max(maxY, Iq[1]);
+    });
+    // value labels
+    const lab = (x, val, anchor) => {
+      if (!nz(val)) return;
+      const y = val >= 0 ? Y(val) - 9 : Y(val) + 11;
+      els.push(`<text class="v" x="${f1(X(x) + (anchor === "start" ? 3 : anchor === "end" ? -3 : 0))}" y="${f1(y)}"${anchor !== "middle" ? ` style="text-anchor:${anchor}"` : ""}>${num(val)}</text>`);
+    };
+    const tol = 1e-9 * Math.max(1, mx);
+    segs.forEach((s, i) => {
+      const c = s[k], constSeg = !nz(c[1]) && !nz(c[2]);
+      const prev = segs[i - 1], next = segs[i + 1];
+      if (constSeg) {
+        const contPrev = prev && !nz(prev[k][1]) && !nz(prev[k][2]) && Math.abs(prev.vals[k][0] - s.vals[k][0]) <= tol;
+        if (!contPrev) {
+          // label once in the middle of the run of equal constant segments
+          let j = i; while (segs[j + 1] && !nz(segs[j + 1][k][1]) && !nz(segs[j + 1][k][2]) && Math.abs(segs[j + 1].vals[k][0] - s.vals[k][0]) <= tol) j++;
+          lab((s.x0 + segs[j].x1) / 2, s.vals[k][0], "middle");
+        }
+        return;
+      }
+      const jumpL = !prev || Math.abs(prev.vals[k][1] - s.vals[k][0]) > tol;
+      const jumpR = !next || Math.abs(next.vals[k][0] - s.vals[k][1]) > tol;
+      if (jumpL) lab(s.x0, s.vals[k][0], "start");
+      lab(s.x1, s.vals[k][1], jumpR ? "end" : "middle");
+    });
+    // local extremum
+    if (beam && k === "M") R.stars.forEach(st => {
+      els.push(`<line class="starline" x1="${f1(X(st.x))}" y1="${f1(base)}" x2="${f1(X(st.x))}" y2="${f1(Y(st.M))}"/>`);
+      els.push(`<circle class="star" cx="${f1(X(st.x))}" cy="${f1(Y(st.M))}" r="3.4"/>`);
+      const yl = st.M >= 0 ? Y(st.M) - 10 : Y(st.M) + 13;
+      els.push(`<text class="v st" x="${f1(X(st.x) - 6)}" y="${f1(yl)}" style="text-anchor:end">${num(st.M)}</text>`);
+      els.push(`<text class="v st" x="${f1(X(st.x))}" y="${f1(base + (st.M >= 0 ? 12 : -10))}">x* = ${num(st.x)}</text>`);
+    });
+    if (beam && k === "V") R.stars.forEach(st => { els.push(`<circle class="star" cx="${f1(X(st.x))}" cy="${f1(base)}" r="3"/>`); });
+    minY = Math.min(minY, top - 4); maxY = Math.max(maxY, base + AMP + 16);
+    top = base + AMP + 30;
+  });
+  // breakpoints: guides and names
+  const bks = [segs[0].x0, ...segs.map(s => s.x1)];
+  const names = beam ? [segs[0].n0, ...segs.map(s => s.n1)] : (mode === "base" ? [R.rb, R.rt] : [R.rt, R.rb]);
+  const yb = top - 6;
+  bks.forEach((x, i) => {
+    els.unshift(`<line class="guide" x1="${f1(X(x))}" y1="${f1(-2)}" x2="${f1(X(x))}" y2="${f1(yb - 12)}"/>`);
+    const nm = beam ? names[i] : (i === 0 ? names[0] : i === bks.length - 1 ? names[1] : "");
+    if (nm) els.push(`<text class="pt" x="${f1(X(x))}" y="${f1(yb)}">${nm}</text>`);
+    els.push(`<text x="${f1(X(x))}" y="${f1(yb + 16)}" style="fill:var(--muted)">${beam ? "x" : "ξ"} = ${num(x)}</text>`);
+  });
+  maxY = Math.max(maxY, yb + 24);
+  svg.setAttribute("viewBox", `${f1(-64)} ${f1(minY - 8)} ${f1(W + 100)} ${f1(maxY - minY + 16)}`);
+  svg.setAttribute("class", "dg");
+  svg.innerHTML = els.join("");
+}
+
+/* ---------- update / init ---------- */
+let timer = null;
+function schedule() { clearTimeout(timer); timer = setTimeout(update, 90); }
+function clearOut(msg) {
+  setAnswers(null);
+  setTable(null);
+  $("#steps").innerHTML = `<p class="empty">${msg}</p>`;
+}
+function update() {
+  save();
+  const { v, missing, bad } = read();
+  const status = $("#status");
+  status.classList.remove("warn");
+  if (missing.length || bad.length) {
+    const names = list => list.map(f => f.tex).join(", ");
+    let msg = "";
+    if (missing.length) msg += `Hiányzó adat: ${names(missing)}. `;
+    if (bad.length) msg += `Érvénytelen érték: ${names(bad)} (pozitív szám kell).`;
+    status.textContent = msg.trim();
+    status.hidden = false;
+    clearOut("A levezetés a teljes adatsor megadása után jelenik meg.");
+    return;
+  }
+  const R = compute(v, presetById(state.preset));
+  if (R.bad || !(R.residual < 1e-7)) {
+    status.textContent = "Ezzel a geometriával a reakciók nem határozhatók meg egyértelműen.";
+    status.classList.add("warn");
+    status.hidden = false;
+    clearOut("Ezzel a geometriával a feladat nem oldható meg.");
+    return;
+  }
+  const vals = answerVals(R);
+  setAnswers(vals);
+  setTable(vals);
+  renderSteps(R);
+  if (!R.stars.length) {
+    status.textContent = "Figyelem: a parabolaíves szakaszok belsejében nincs olyan pont, ahol V = 0, így a „Lokális szélsőérték” rovat ezekkel az adatokkal nem tölthető ki. Ellenőrizd az elrendezést és az adatokat.";
+    status.classList.add("warn");
+    status.hidden = false;
+  } else status.hidden = true;
+  window.__hf4 = { R, vals };
+}
+
+function init() {
+  const saved = load();
+  state.raw = defaultsRaw();
+  if (saved && typeof saved === "object") {
+    if (saved.preset) state.preset = presetById(saved.preset).id;
+    if (saved.rodOrigin === "top" || saved.rodOrigin === "base") state.rodOrigin = saved.rodOrigin;
+    if (saved.raw) FIELD_IDS.forEach(k => { if (typeof saved.raw[k] === "string") state.raw[k] = saved.raw[k]; });
+  }
+  buildPresets();
+  buildAnswers();
+  buildInputs();
+  buildRodOrigin();
+  $("#footer-geo").textContent = geoText(presetById(state.preset));
+  $("#btn-example").addEventListener("click", () => {
+    const pr = presetById(state.preset);
+    Object.assign(state.raw, pr.example);
+    buildInputs();
+    const note = $("#example-note");
+    note.textContent = "Példa: " + pr.exampleNote;
+    note.hidden = false;
+    update();
+  });
+  $("#btn-reset").addEventListener("click", () => {
+    state.raw = defaultsRaw();
+    $("#example-note").hidden = true;
+    buildInputs();
+    update();
+  });
+  update();
+}
+window.__hf4api = { compute, PRESETS, presetById, num, fmtRaw, beamTerms: (R, s) => beamTerms(R, s), rodTerms: (R, s, m) => rodTerms(R, s, m), state };
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
+})();
+</script>
+</body>
+</html>
