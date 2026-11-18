@@ -317,7 +317,7 @@ footer p{margin:4px 0;max-width:90ch}
 
     <section class="card" aria-labelledby="h-results">
       <h2 id="h-results">Eredmények</h2>
-      <p class="sub">A lap táblázatába és a Moodle-be ezek kerülnek (legfeljebb 4 tizedesjegy, a felesleges nullák nélkül; ha a Moodle nem fogadja el a tizedesvesszőt, írd ponttal). Reakciók: +x jobbra, +y felfelé, a nyomaték az óramutató járásával ellentétesen pozitív. A V és M<sub>h</sub> értékek a vízszintes rúdra vonatkoznak, előjelük a lent leírt konvenció szerinti.</p>
+      <p class="sub">Ezeket írd be a tanszéki ellenőrzőbe (<a href="https://www.mm.bme.hu/hfchk">mm.bme.hu/hfchk</a>): az csak tizedespontot fogad el, ezért itt ponttal szerepelnek (legfeljebb 4 tizedesjegy). A beadandó dokumentumba tizedesvesszővel írd őket, ahogy lent az eredménytáblázat mutatja. Reakciók: +x jobbra, +y felfelé, a nyomaték az óramutató járásával ellentétesen pozitív. A V és M<sub>h</sub> értékek a vízszintes rúdra vonatkoznak, előjelük a lent leírt konvenció szerinti.</p>
       <p class="status" id="status" hidden></p>
       <div id="answers"></div>
     </section>
@@ -325,7 +325,7 @@ footer p{margin:4px 0;max-width:90ch}
 
   <section class="card" aria-labelledby="h-table" style="margin-bottom:20px">
     <h2 id="h-table">Eredménytáblázat</h2>
-    <p class="sub">Ugyanazok a táblázatok, mint a lap alján.</p>
+    <p class="sub">Ugyanazok a táblázatok, mint a lap alján, tizedesvesszővel, a beadandó dokumentumhoz.</p>
     <div id="restable"></div>
   </section>
 
@@ -428,7 +428,7 @@ const PRESETS = [
   {
     id: "1", title: "1. változat",
     desc: "A befogás a bal falban. Az AC egyenes rúd C-ben csuklóval kapcsolódik az L-alakú rúdhoz, amelynek függőleges szára a jobb végén felfelé fut. B görgős támasz egy függőleges falon (csak vízszintes reakció). A p terhelés C-től a jobb végig lefelé hat, F felfelé C-től b-re.",
-    years: "Minta: 1 db 2026/27-es lap",
+    years: "Minta: 3 db 2026/27-es lap",
     pts: { A: ["0", "0"], C: ["a", "0"], E: ["a+b", "0"], D: ["a+b+c", "0"], B: ["a+b+c", "k"] },
     sheetNames: ["A", "B", "C"],
     beamEnd: "D",
@@ -906,17 +906,21 @@ function fallbackCopy(text) {
 // location text of an extremum hit: a point, or an interval [x0; x1]
 const locText = hh => hh.iv && hh.x1 - hh.x0 > 1e-9 ? `[${num(hh.x0)}; ${num(hh.x1)}]` : num(hh.x0);
 const locTex = hh => hh.iv && hh.x1 - hh.x0 > 1e-9 ? T`[${tn(hh.x0)};\ ${tn(hh.x1)}]` : tn(hh.x0);
+const uniq = a => [...new Set(a)];
+// several extremum values (a tie in |V| or |M_h| with opposite signs): positive first
+const valsTxt = list => uniq(list.map(hh => hh.val).sort((p, q) => q - p).map(v => num(v))).join(" / ");
+const hasTie = list => new Set(list.map(hh => Math.sign(hh.val))).size > 1;
 function answerVals(R) {
   const s = R.sol, V = R.Vext.list, M = R.Mext.list, st = R.stars;
   return {
     Ax: num(s.Ax), Ay: num(s.Ay), MA: num(s.MA), Bx: num(s.Bx), By: num(s.By),
-    xV: V.map(locText).join(" és "), VxV: [...new Set(V.map(hh => num(hh.val)))].join(" / "),
-    xM: M.map(locText).join(" és "), MxM: [...new Set(M.map(hh => num(hh.val)))].join(" / "),
+    xV: uniq(V.map(locText)).join(" és "), VxV: valsTxt(V),
+    xM: uniq(M.map(locText)).join(" és "), MxM: valsTxt(M),
     Vs: "0", xs: st.length ? st.map(q => num(q.x)).join(" és ") : "—", Ms: st.length ? st.map(q => num(q.M)).join(" és ") : "—",
   };
 }
-// the answer boxes use an ASCII minus so that a copied value can be pasted into Moodle
-function setAnswers(vals) { Object.keys(ansEls).forEach(k => { ansEls[k].textContent = vals ? vals[k].replace(/−/g, "-") : "—"; }); }
+// the answer boxes use a decimal point and an ASCII minus: the department checker (mm.bme.hu/hfchk) rejects decimal commas
+function setAnswers(vals) { Object.keys(ansEls).forEach(k => { ansEls[k].textContent = vals ? vals[k].replace(/−/g, "-").replace(/,/g, ".") : "—"; }); }
 
 /* ---------- results table (as on the sheet) ---------- */
 function setTable(vals) {
@@ -1274,7 +1278,9 @@ function renderSteps(R) {
   });
   const vx = R.Vext.list, mx = R.Mext.list;
   const sideTxt = hh => hh.iv ? "a teljes szakaszon" : hh.sides && hh.sides.length === 1 ? (hh.sides[0] === "+" ? "a pont jobb oldalán" : "a pont bal oldalán") : "";
-  items5.push({ p: `Abszolút szélsőértékek a vízszintes részen: $|V|_{\\max} = ${tn(R.Vext.max)}$ kN, helye $x_V = ${vx.map(locTex).join(T`\text{ és }`)}$ m (${vx.map(sideTxt).filter(Boolean).join(", ") || "egy pontban"}), $V(x_V) = ${[...new Set(vx.map(hh => tn(hh.val)))].join(" / ")}$ kN. $|M_h|_{\\max} = ${tn(R.Mext.max)}$ kNm, helye $x_{M_h} = ${mx.map(locTex).join(T`\text{ és }`)}$ m, $M_h(x_{M_h}) = ${[...new Set(mx.map(hh => tn(hh.val)))].join(" / ")}$ kNm.` });
+  const hitTxt = (hh, f, unit) => `$x = ${locTex(hh)}$ m${sideTxt(hh) ? " (" + sideTxt(hh) + ")" : ""}: $${f} = ${tn(hh.val)}$ ${unit}`;
+  items5.push({ p: `Abszolút szélsőértékek a vízszintes részen. $|V|_{\\max} = ${tn(R.Vext.max)}$ kN, ${vx.map(hh => hitTxt(hh, "V", "kN")).join("; ")}. $|M_h|_{\\max} = ${tn(R.Mext.max)}$ kNm, ${mx.map(hh => hitTxt(hh, "M_h", "kNm")).join("; ")}.` });
+  if (hasTie(vx) || hasTie(mx)) items5.push({ p: `Figyelem: ${hasTie(vx) ? "a nyíróerő" : "a hajlítónyomaték"} abszolút értékének maximumát két helyen (vagy egy ugrás két oldalán) ellentétes előjellel veszi fel. Matematikailag mindkettő helyes, de az ellenőrző valószínűleg csak az egyiket fogadja el: ha az egyik nem jó, a másikat próbáld.`, cls: "warnp" });
   // rod values
   const rtb = document.createElement("div");
   rtb.className = "tabwrap";
@@ -1666,11 +1672,13 @@ function update() {
   setAnswers(vals);
   setTable(vals);
   renderSteps(R);
-  if (!R.stars.length) {
-    status.textContent = "Figyelem: a parabolaíves szakaszok belsejében nincs olyan pont, ahol V = 0, így a „Lokális szélsőérték” rovat ezekkel az adatokkal nem tölthető ki. Ellenőrizd az elrendezést és az adatokat.";
-    status.classList.add("warn");
-    status.hidden = false;
-  } else status.hidden = true;
+  const msgs = [];
+  const dot = s => s.replace(/−/g, "-").replace(/,/g, ".");
+  if (!R.stars.length) msgs.push("Figyelem: a parabolaíves szakaszok belsejében nincs olyan pont, ahol V = 0, így a „Lokális szélsőérték” rovat ezekkel az adatokkal nem tölthető ki. Ellenőrizd az elrendezést és az adatokat.");
+  if (hasTie(R.Vext.list)) msgs.push(`Holtverseny: |V| maximuma ellentétes előjellel két helyen is ugyanakkora (V(x_V) = ${dot(vals.VxV)}). Az ellenőrzőbe először a pozitívat írd, ha nem fogadja el, a negatívat.`);
+  if (hasTie(R.Mext.list)) msgs.push(`Holtverseny: |M_h| maximuma ellentétes előjellel két helyen is ugyanakkora (M_h(x_M) = ${dot(vals.MxM)}). Az ellenőrzőbe először a pozitívat írd, ha nem fogadja el, a negatívat.`);
+  if (msgs.length) { status.textContent = msgs.join(" "); status.classList.add("warn"); status.hidden = false; }
+  else status.hidden = true;
   window.__hf4 = { R, vals };
 }
 
