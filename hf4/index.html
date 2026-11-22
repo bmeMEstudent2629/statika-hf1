@@ -337,7 +337,7 @@ footer p{margin:4px 0;max-width:90ch}
 
   <footer>
     <p id="footer-geo"></p>
-    <p>Az előjelkonvenció egy kijavított 2023/24-es lap levezetéséből származik: N húzásra pozitív, V a metszettől balra lévő erők függőleges összege (felfelé pozitív), M<sub>h</sub> a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív), így M<sub>h</sub>′ = −V. A 2. változatot ennek a lapnak az eredménytáblázatával ellenőriztük, az 1. változatot két független számítással. Tanulási segédlet: a levezetést érdemes végigkövetni, az ábrákat pedig magadnak megrajzolni.</p>
+    <p>Az előjelkonvenció egy kijavított 2023/24-es lap levezetéséből származik: N húzásra pozitív, V a metszettől balra lévő erők függőleges összege (felfelé pozitív), M<sub>h</sub> a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív), így M<sub>h</sub>′ = −V. A 2. változatot ennek a lapnak az eredménytáblázatával ellenőriztük, az 1. és a 3. változatot két független számítással. Tanulási segédlet: a levezetést érdemes végigkövetni, az ábrákat pedig magadnak megrajzolni.</p>
   </footer>
 </div>
 
@@ -472,6 +472,30 @@ const PRESETS = [
     labels: { A: [12, 18], C: [12, 18], E: [12, 18], B: [-14, -14], D: [13, -8] },
     example: { a: "0.8", b: "0.5", c: "0.6", k: "0.3", p: "4", F: "3" },
     exampleNote: "a kijavított 2023/24-es lap adatai. A lap eredményei: A_x = −3, A_y = 4,7455, M_A = 3,4164, B_x = 0, B_y = 0,455, x_V = 0, V = 4,7455, x_Mh = 0, M_h = 3,4164, x* = 1,1863, M_h(x*) = −0,2983.",
+  },
+  {
+    id: "3", title: "3. változat",
+    desc: "A befogás a bal falban. Az AC egyenes rúd C-ben csuklóval kapcsolódik az L-alakú rúdhoz, amelynek k magas függőleges szára C-ben áll, a tetején F balra hat. B görgős támasz a talajon (csak függőleges reakció). A p terhelés A-tól a távolságra kezdődik, a jobb végig tart, és felfelé hat.",
+    years: "Minta: 1 db 2026/27-es lap",
+    pts: { A: ["0", "0"], E: ["a", "0"], C: ["a+b", "0"], D: ["a+b", "k"], B: ["a+b+c", "0"] },
+    sheetNames: ["A", "B", "C"],
+    beamEnd: "B",
+    rod: { base: "C", top: "D", body: 2 },
+    supA: { at: "A", type: "fixed" },
+    supB: { at: "B", type: "rollerY" },
+    p: { from: "E", to: "B", dir: 1 },
+    F: { at: "D", dir: [-1, 0] },
+    bodyDesc: { 1: "A–E–C egyenes rúd", 2: "D–C–B L-alakú rúd" },
+    plan: [
+      { b: 2, t: "M", O: "C", u: "By" }, { b: 2, t: "x", u: "Cx" }, { b: 2, t: "y", u: "Cy" },
+      { b: 1, t: "x", u: "Ax" }, { b: 1, t: "y", u: "Ay" }, { b: 1, t: "M", O: "A", u: "MA" },
+    ],
+    check: "B",
+    dims: [["A", "E", "a"], ["E", "C", "b"], ["C", "B", "c"]],
+    kSide: -1,
+    labels: { A: [12, 18], E: [12, 18], C: [12, 18], D: [-12, -10], B: [14, -12] },
+    example: { a: "1", b: "0.8", c: "0.4", k: "0.2", p: "5", F: "6" },
+    exampleNote: "bemutató adatok (nem egy konkrét lapról). Eredmény: A = (6; −2) kN, M_A = −2 kNm, B_y = −4 kN, x* = 1,4 m, M_h(x*) = 0,4 kNm.",
   },
 ];
 const presetById = id => PRESETS.find(p => p.id === id) || PRESETS[0];
@@ -1108,7 +1132,9 @@ function fnLines(name, arg, terms, coefG, unit, symOnlyIfEmpty) {
   if (!terms.length) return T`${name}(${arg}) &= 0${unit}`;
   const plain = numl === poly;
   tex += T` &&= ${numl}`;
-  if (!plain && needsExpand(terms)) tex += T` = ${poly}`;
+  // several constant terms (e.g. −A_x + F) are added up as well
+  const nConst = terms.filter(t => !t.fn && nz(t.sg * t.val * (t.preV != null ? t.preV : 1))).length;
+  if (!plain && (needsExpand(terms) || nConst > 1)) tex += T` = ${poly}`;
   return tex + unit;
 }
 
@@ -1391,6 +1417,7 @@ function drawStructure(svg, R, mode) {
   (fbd ? [1, 2] : [1]).forEach(b => { const c = [bodyX(R.xC, b), 0]; cv.B.marks.push(`<circle class="hinge" cx="${f1(c[0])}" cy="${f1(c[1])}" r="${hr}"/>`); cv.track([c[0] - hr, c[1] - hr], [c[0] + hr, c[1] + hr]); });
   // distributed load (box with hatch and arrows)
   const boxes = fbd ? R.parts.map(pt => ({ s: pt.s, e: pt.e, b: pt.body, pt })) : [{ s: R.dist.s, e: R.dist.e, b: null }];
+  const presX = []; // screen x of the dashed resultant arrows (FBD), to keep the F arrow and its label clear of them
   boxes.forEach(bx => {
     const x0 = bodyX(bx.s, bx.b || (bx.s < R.xC - 1e-9 ? 1 : 2)), x1 = bodyX(bx.e, bx.b || (bx.e <= R.xC + 1e-9 ? 1 : 2));
     const xa = fbd ? x0 : bx.s * s, xe = fbd ? x1 : bx.e * s;
@@ -1410,6 +1437,7 @@ function drawStructure(svg, R, mode) {
     cv.label(xa + (xe - xa) * 0.5 / n + (mini ? 12 : 9), -Hq / 2 - 2, "p", "", "t-load halo", "start");
     if (fbd) {
       const xm = (xa + xe) / 2, top = -Hq - 34;
+      presX.push(xm);
       if (R.pr.p.dir < 0) cv.arrow(cv.B.pres, [xm, top], [xm, -2]); else cv.arrow(cv.B.pres, [xm, -2], [xm, top]);
       const nm = bx.pt.name;
       cv.label(xm + 6, top - 2, nm.split("_")[0], nm.split("_")[1] || "", "t-load halo", "start");
@@ -1444,9 +1472,18 @@ function drawStructure(svg, R, mode) {
   }
   // concentrated load F: head at the point, coming from the opposite side
   const lf = R.loadF, fq = S(lf.name, lf.body), fd = [Math.sign(lf.F[0]), -Math.sign(lf.F[1])];
-  const ftail = [fq[0] - fd[0] * LF, fq[1] - fd[1] * LF];
+  let LFx = LF, crowded = false;
+  if (fd[0] !== 0 && fq[1] > -Hq - 40) {
+    // a horizontal F at the height of the resultant arrows: stop short of them and put the label above the arrow
+    presX.forEach(px => {
+      const dd = (px - fq[0]) * -fd[0];
+      if (dd > 0 && dd < LF + 30) { crowded = true; LFx = Math.min(LFx, Math.max(24, dd - 10)); }
+    });
+  }
+  const ftail = [fq[0] - fd[0] * LFx, fq[1] - fd[1] * LFx];
   cv.arrow(cv.B.load, ftail, [fq[0] - fd[0] * 3, fq[1] - fd[1] * 3]);
   if (fd[0] === 0) cv.label(ftail[0] + 8, ftail[1] + (fd[1] < 0 ? -6 : 6), "F", "", "t-load halo", "start");
+  else if (crowded) cv.label((ftail[0] + fq[0]) / 2, fq[1] - 12, "F", "", "t-load halo");
   else outLabel(cv, ftail, [-fd[0], -fd[1]], "F", "", "t-load halo");
   // point labels
   Object.keys(P).forEach(n => {
