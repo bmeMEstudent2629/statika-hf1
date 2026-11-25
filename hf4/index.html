@@ -337,7 +337,7 @@ footer p{margin:4px 0;max-width:90ch}
 
   <footer>
     <p id="footer-geo"></p>
-    <p>Az előjelkonvenció egy kijavított 2023/24-es lap levezetéséből származik: N húzásra pozitív, V a metszettől balra lévő erők függőleges összege (felfelé pozitív), M<sub>h</sub> a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív), így M<sub>h</sub>′ = −V. A 2. változatot ennek a lapnak az eredménytáblázatával ellenőriztük, az 1. és a 3. változatot két független számítással. Tanulási segédlet: a levezetést érdemes végigkövetni, az ábrákat pedig magadnak megrajzolni.</p>
+    <p>Az előjelkonvenció egy kijavított 2023/24-es lap levezetéséből származik: N húzásra pozitív, V a metszettől balra lévő erők függőleges összege (felfelé pozitív), M<sub>h</sub> a balra lévő erők nyomatéka a metszet pontjára (az óramutató járásával ellentétesen pozitív), így M<sub>h</sub>′ = −V. A 2. változatot ennek a lapnak az eredménytáblázatával ellenőriztük, az 1., a 3. és a 4. változatot két független számítással. Tanulási segédlet: a levezetést érdemes végigkövetni, az ábrákat pedig magadnak megrajzolni.</p>
   </footer>
 </div>
 
@@ -496,6 +496,30 @@ const PRESETS = [
     labels: { A: [12, 18], E: [12, 18], C: [12, 18], D: [-12, -10], B: [14, -12] },
     example: { a: "1", b: "0.8", c: "0.4", k: "0.2", p: "5", F: "6" },
     exampleNote: "bemutató adatok (nem egy konkrét lapról). Eredmény: A = (6; −2) kN, M_A = −2 kNm, B_y = −4 kN, x* = 1,4 m, M_h(x*) = 0,4 kNm.",
+  },
+  {
+    id: "4", title: "4. változat",
+    desc: "A befogás a bal falban. Az AC egyenes rúd C-ben csuklóval kapcsolódik az L-alakú rúdhoz, amelynek függőleges szára a jobb végén felfelé fut. B görgős támasz egy függőleges falon (csak vízszintes reakció). A p terhelés A-tól a+b hosszon felfelé hat, F lefelé a terhelés végén (C-től b-re).",
+    years: "Minta: 1 db 2026/27-es lap",
+    pts: { A: ["0", "0"], C: ["a", "0"], E: ["a+b", "0"], D: ["a+b+c", "0"], B: ["a+b+c", "k"] },
+    sheetNames: ["A", "B", "C"],
+    beamEnd: "D",
+    rod: { base: "D", top: "B", body: 2 },
+    supA: { at: "A", type: "fixed" },
+    supB: { at: "B", type: "rollerX", wall: "right" },
+    p: { from: "A", to: "E", dir: 1 },
+    F: { at: "E", dir: [0, -1] },
+    bodyDesc: { 1: "A–C egyenes rúd", 2: "C–E–D–B L-alakú rúd" },
+    plan: [
+      { b: 2, t: "M", O: "C", u: "Bx" }, { b: 2, t: "x", u: "Cx" }, { b: 2, t: "y", u: "Cy" },
+      { b: 1, t: "x", u: "Ax" }, { b: 1, t: "y", u: "Ay" }, { b: 1, t: "M", O: "A", u: "MA" },
+    ],
+    check: "B",
+    dims: [["A", "C", "a"], ["C", "E", "b"], ["E", "D", "c"]],
+    kSide: -1,
+    labels: { A: [12, 18], C: [12, 18], E: [12, 18], D: [12, 18], B: [-14, -12] },
+    example: { a: "0.8", b: "0.6", c: "0.6", k: "0.3", p: "5", F: "4" },
+    exampleNote: "bemutató adatok (nem egy konkrét lapról). Eredmény: A = (5; −3) kN, M_A = −0,8 kNm, B_x = −5 kN, x* = 0,6 m, M_h(x*) = 0,1 kNm.",
   },
 ];
 const presetById = id => PRESETS.find(p => p.id === id) || PRESETS[0];
